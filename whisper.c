@@ -86,56 +86,30 @@ symbol_lookup(char *sym) {
    * */
   
   /* if the stack is empty, push a stack */
-  if (stack_top == NULL)
-    symtab_push();
-  
-  /* Start searchingn from the top of the stack */
-  symtab_stack *stack_ptr = stack_top;
-  while (stack_ptr != NULL) {
-    symbol *sp = &stack_ptr->symtab[symbol_hash(sym) % NHASH];
+    symbol *sp = &symtab[symbol_hash(sym)%NHASH];
     int symbol_count = NHASH;
 
     while (--symbol_count >= 0) {
-      if (sp->name && !strcmp(sp->name, sym)) { 
-        printf("\nmatched name '%s'\n", sp->name); 
-        /* Symbol found that matches the name. Return pointer to the symbol */
-        return sp;
-      }
-    
-      if(!sp->name) {
-        printf("did not match name '%s' in this scope.\n", sym);
-        break;
-      }
-      if (++sp >= symtab + NHASH) 
-        sp = stack_ptr->symtab; /* Don't wander off the symtable */
-    }
-    stack_ptr = stack_ptr->next;
-  }
-  /* If we are here, we didn't find the symbol in any scope. 
-   * Make a new symbol in the current scope.
-   */
+        if (sp->name && !strcmp(sp->name, sym)) {
+            printf("\nmatched name '%s'\n", sp->name);
+            /* Symbol found that matches the name. Return pointer to the symbol */
+            return sp;
+        }
 
-  symbol *sym_new = &stack_top->symtab[symbol_hash(sym) % NHASH];
-  int symbol_count = NHASH;
-  while (--symbol_count >= 0) {
-    if (!sym_new->name) {
-      /* We use malloc and strcpy instead of strdup(). This makes it more clear
-       * That we are allocating memory on the heap which needs to be freed later 
-       */
-      sym_new->name = malloc(strlen(sym) + 1);
-      // printf("new symbol name '%s' malloc'd at %p\n", sym, (void *)sym_new->name);
-      strcpy(sym_new->name, sym);
-      sym_new->value = 0;
-      sym_new->func = NULL;
-      sym_new->symbols = NULL;
-      stack_top->size++;
-      
-      return sym_new;
+        if (!sp->name) {
+            sp->name = malloc(strlen(sym) + 1);
+            strcpy(sp->name, sym);
+            sp->value = 0;
+            sp->func = NULL;
+            sp->symbols = NULL;
+            return sp;
+        }
     }
-    /* Do not wander off the symtable */
-    if (++sym_new >= stack_top->symtab + NHASH)
-      sym_new = stack_top->symtab;
-  }
+      if (++sp >= symtab + NHASH) 
+        sp = symtab; /* Don't wander off the symtable */
+
+
+
   /* If all this failed ...*/
   yyerror("Symbol table overflow\n");
   abort();

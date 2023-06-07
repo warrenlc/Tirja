@@ -1,4 +1,4 @@
-CC = cc
+CC = gcc
 CFLAGS = -Wall -pedantic -g
 LDLIBS = -lm
 
@@ -23,3 +23,5 @@ whisper.lex.o: whisper.lex.c whisper.tab.h
 .PHONY: clean
 clean:
 	rm -f whisper whisper.tab.c whisper.tab.h whisper.lex.c *.o
+	rm -rf whisper.dSYM/
+
