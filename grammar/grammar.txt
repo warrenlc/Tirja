@@ -1,0 +1,62 @@
+** NOTE: rules in ALL CAPS are tokens
+
+<program>        ::=  <exp_list>
+
+<exp_list>       ::=  <expression> |
+                      <exp_list> SEMICOLON <expression>
+<expression>     ::=  <numeric_exp>
+
+<numeric_exp>    ::=  <numeric_exp> <inc_dec>     |
+                 ::=  <inc_dec>     <mumeric_exp> |
+                 ::=  <unary_op>    <numeric_exp> |
+                 ::=  <numeric_exp> <binary_op> <numeric_exp>
+                 ::=  LPAREN <numeric_exp> RPAREN
+                 ::=  <number>
+                 ::= <variable_name>
+
+<inc_dec>        ::=  INCREMENT |
+                      DECREMENT
+
+<unary_op>       ::= MINUS  |
+                     BWNOT
+
+<binary_op>      ::= POUND   |
+                 ::= TIMES   |
+                 ::= DIV     |
+                 ::= MOD     |
+                 ::= PLUS    |
+                 ::= MINUS   |
+                 ::= BWLEFT  |
+                 ::= BWRIGHT |
+                 ::= BWAND   |
+                 ::= XOR     |
+                 ::= BWOR    |
+
+<number>         ::= NUMBER
+
+<variable_name>  ::= VAR_NAME
+
+
+** TOKENS **
+
+SEMICOLON        ::= \;
+LPAREN           ::= \(
+RPAREN           ::= \)
+INCREMENT        ::= [\+]{2}
+DECREMENT        ::= [\-]{2}
+MINUS            ::= [\-]{1}
+BWNOT            ::= \~
+POUND            ::= \#
+TIMES            ::= \*
+DIV              ::= \/
+MOD              ::= \%
+PLUS             ::= \+
+BWLEFT           ::= [\<]{2}
+BWRIGHT          ::= [\>]{2}
+BWAND            ::= [\&]{1}
+XOR              ::= \^
+BWOR             ::= \|
+NUMBER           ::= \d+\.?\d*
+VAR_NAME         ::= [a-z\_]+[a-zA-Z\_0-9]*
+
+
