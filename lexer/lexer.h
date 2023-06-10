@@ -2,10 +2,13 @@
  *  Lexical Analysis for Tirja
  * */
 
+#include <regex.h>
+
+#include "tokens.h"
+
 #ifndef LEXER_H
 #define LEXER_H
 
-#include "tokens.h"
 
 /******************************************
  *              Structures
