@@ -1,6 +1,8 @@
 This is my language playground for what will be the language Tirja.
 
-This will start as moving an earlier project, "Whisper" here which is using flex, bison, C and will evolve to be Tirja.
-So things will be called Whisper for awhile until I tear enough down/rebuild enough to be Tirja. 
+I have decided to do a handmade parser. This could take a while as I have no idea what I am doing. 
+I am still unsure if I will use C or C++ or even something else. 
+
+This will take a while...
 
 Tirja is pronounced TEER-YAH and was my best friend (border collie) 
