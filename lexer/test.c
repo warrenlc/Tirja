@@ -5,17 +5,20 @@
 
 #define MAX_TOKEN_LENGTH 16
 
+/* The types a token can be. */
 typedef enum Type_Token{
     T_NUMBER,
     T_PLUS,
     T_SEMICOLON
 }Type_Token;
 
+/* A Token has a type and a string representation, aka 'lexeme' */
 typedef struct Token {
     Type_Token type;
-    char *lexeme;
+    char *lexeme; /* */
 }Token;
 
+/* dynamic array for holding matched tokens */
 typedef struct Token_Array
 {
     Token *tokens;
@@ -72,6 +75,7 @@ void
 token_array_free(Token_Array* t_array)
 {
     for (int i = 0; i < t_array->size; i++) {
+        /* free the memory made with strdup during token_create */
         free((t_array)->tokens[i].lexeme);
     }
     free(t_array->tokens);
