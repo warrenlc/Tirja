@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -pedantic -g
-STD = -std=c89
+STD = -std=c99
 
 lex: test.c lexer.c
 	$(CC) $(CFLAGS) $(STD) -o $@ $^
