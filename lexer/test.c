@@ -36,9 +36,9 @@ token_create(Type_Token type, char *string_token)
         fprintf(stderr, "Failure allocating memory for token\n");
         return NULL;
     }
-
+    char *lexeme_new  = malloc(sizeof(strlen(string_token) + 1));
+    token_new->lexeme = strcpy(lexeme_new, string_token);
     token_new->type          = type;
-    token_new->lexeme = strdup(string_token);
 
     return token_new;
 }
@@ -112,7 +112,9 @@ int main(void) {
     //     printf("\n"); // Do something with character.
     // }
     
-    char new_string[MAX_TOKEN_LENGTH];
+    //char new_string[MAX_TOKEN_LENGTH];
+    
+    char *new_string = (char *)calloc(MAX_TOKEN_LENGTH + 1, sizeof *new_string);
     Token_Array t_array;
     token_array_init(&t_array);
 
@@ -130,18 +132,11 @@ int main(void) {
                 Token *t = token_create(T_NUMBER, new_string);
                 token_array_add(&t_array, t);
                 printf("token '%s' added\n", new_string);
-                memset(new_string, '\0', sizeof new_string);
+                memset(new_string, '\0', MAX_TOKEN_LENGTH);
                 free(t);
             }
             printf("\n\n\n");
         }
-        // else {
-        //     Token *t = token_create(T_NUMBER, new_string); 
-        //     token_array_add(&t_array, t);
-        //     printf("token added\n");
-        //     memset(new_string, '\0', sizeof new_string);
-        // }
-        
         
         printf("The next character of the test string is: %c\n\n\n", string_test[i + 1]);
     }
@@ -149,12 +144,9 @@ int main(void) {
     printf("and the last non-null character was: %c\n", string_test[length_string_test - 1]);
 
     printf("the tokens:\n");
-    for (int k = 0; k < t_array.size; k++) {
+    for (int k = 0; k < t_array.size; k++) 
         token_print(&(t_array).tokens[k]);
-        // free(&(t_array).tokens[k].lexeme);
-        // free(&(t_array).tokens[k]);
-    }
-    
+    free(new_string); 
     token_array_free(&t_array);
     return 0;
 }
