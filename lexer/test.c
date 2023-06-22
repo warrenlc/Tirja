@@ -3,7 +3,6 @@
 #include <string.h>
 #include <ctype.h>
 
-// #define MAX_TOKEN_LENGTH 16
 #include "lexer.h"
 
 int main(void) {
@@ -11,22 +10,6 @@ int main(void) {
     printf("Test string is: %s\n", string_test);
     
     int length_string_test = (int)strlen(string_test);
-    // int counter = 0;
-    // while (c != NULL && *c != '\0') {
-    //     printf("counter is at position: %d\n", counter);
-    //     printf("%s\n", c);
-    //     ++c;
-    //     counter++;
-    // }
-    
-    
-    // for (char character = *string_test; character != '\0'; character = *++string_test) {
-    //     printf("string test: %s\n", string_test);
-    //     putchar(character);
-    //     printf("\n"); // Do something with character.
-    // }
-    
-    //char new_string[MAX_TOKEN_LENGTH];
     
     char *new_string = (char *)calloc(MAX_TOKEN_LENGTH + 1, sizeof *new_string);
     Token_Array t_array;
