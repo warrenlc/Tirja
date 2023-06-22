@@ -6,7 +6,7 @@
 #include "lexer.h"
 
 int main(void) {
-    const char *string_test = "a = 66+55 - 7;";
+    const char *string_test = "result = 66+55 - 7 + TestValue;";
     printf("Test string is: %s\n", string_test);
     
     int length_string_test = (int)strlen(string_test);
@@ -14,15 +14,35 @@ int main(void) {
     char *new_string = (char *)calloc(MAX_TOKEN_LENGTH + 1, sizeof *new_string);
     Token_Array t_array;
     token_array_init(&t_array);
+    
+    #define char_current  string_test[i]
+    #define char_next     string_test[i + 1]
+    #define char_previous string_test[i - 1]
 
-    for (int i = 0; i < length_string_test - 1; ++i) { 
+    for (int i = 0; i < length_string_test; ++i) { 
         printf("staring another run on the loop, where new_string has value: '%s'\n", new_string);        
-        printf("The current character of the test string is: %c\n", string_test[i]);
-        if (isdigit(string_test[i])) {
-            strncat(new_string, &string_test[i], 1);
+        printf("The current character of the test string is: %c\n", char_current);
+        /* IF the character is alphanumeric */
+        if (isalpha(char_current)) {
+            strncat(new_string, &char_current, 1);
+            printf("new_string: ");
+            puts(new_string);
+
+            /* Check what is ahead and see if we need to make the token yet. */
+            if (!isalpha(char_next)) {
+                Token *t = token_create(T_NAME, new_string);
+                token_array_add(&t_array, t);
+                printf("token '%s' added\n", new_string);
+                memset(new_string, '\0', MAX_TOKEN_LENGTH);
+                free(t);
+            }
+        }
+        /* IF the character is a digit */
+        else if (isdigit(char_current)) {
+            strncat(new_string, &char_current, 1);
             printf("new string: ");
             puts(new_string);
-            if (!isdigit(string_test[i+1])) {
+            if (!isdigit(char_next)) {
                 printf("I got to where we should add the token.\n"
                 "The current value of new_string is: %s\n", new_string);
 
@@ -34,8 +54,55 @@ int main(void) {
             }
             printf("\n\n\n");
         }
+
+        else if (char_current == '+') {
+            strncat(new_string, &char_current, 1);
+            printf("new string: ");
+            puts(new_string);
+            Token *t = token_create(T_PLUS, new_string);
+            token_array_add(&t_array, t);
+            printf("token '%s', added\n", new_string);
+            memset(new_string, '\0', MAX_TOKEN_LENGTH);
+            free(t); 
+        }
+
+        else if (char_current == '-') {
+            strncat(new_string, &char_current, 1);
+            printf("new_sring: ");
+            puts(new_string);
+            Token *t = token_create(T_MINUS, new_string);
+            token_array_add(&t_array, t);
+            printf("token '%s' added\n", new_string);
+            memset(new_string, '\0', MAX_TOKEN_LENGTH);
+            free(t);
+        }
+
+        else if (char_current == '=') {
+            strncat(new_string, &char_current, 1);
+            printf("new_string: ");
+            puts(new_string);
+            Token *t = token_create(T_EQUALS, new_string);
+            token_array_add(&t_array, t);
+            printf("token '%s' added\n", new_string);
+            memset(new_string, '\0', MAX_TOKEN_LENGTH);
+            free(t);
+        }
+
+        else if (char_current == ';') {
+            strncat(new_string, &char_current, 1);
+            printf("new_string: ");
+            puts(new_string);
+            Token *t = token_create(T_EQUALS, new_string);
+            token_array_add(&t_array, t);
+            printf("token '%s' added\n", new_string);
+            memset(new_string, '\0', MAX_TOKEN_LENGTH);
+            free(t);
+        }
+        else
+            printf("Unrecognized character '%c'\n", char_current);
+        printf("\n\n\n");
         
-        printf("The next character of the test string is: %c\n\n\n", string_test[i + 1]);
+        printf("The next character of the test string is: %c\n\n\n", char_next);
     }
     
     printf("and the last non-null character was: %c\n", string_test[length_string_test - 1]);

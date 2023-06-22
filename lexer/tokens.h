@@ -9,8 +9,11 @@
 
 /* The types a token can be. */
 typedef enum Token_Type{
+    T_NAME, 
     T_NUMBER,
+    T_EQUALS,
     T_PLUS,
+    T_MINUS,
     T_SEMICOLON
 }Token_Type;
 
