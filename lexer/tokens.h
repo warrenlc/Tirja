@@ -11,9 +11,15 @@
 typedef enum Token_Type{
     T_NAME, 
     T_NUMBER,
+    T_RPAREN,
+    T_LPAREN,
     T_EQUALS,
     T_PLUS,
     T_MINUS,
+    T_TIMES,
+    T_DIVIDE,
+    T_INCREMENT,
+    T_DECREMENT,
     T_SEMICOLON
 }Token_Type;
 
