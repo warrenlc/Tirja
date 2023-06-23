@@ -13,7 +13,7 @@ token_create(Token_Type type, char *string_token)
         fprintf(stderr, "Failure allocating memory for token\n");
         return NULL;
     }
-    char *lexeme_new  = malloc(sizeof(strlen(string_token) + 1));
+    char *lexeme_new  = malloc(sizeof(char) * (strlen(string_token) + 1));
     token_new->lexeme = strcpy(lexeme_new, string_token);
     token_new->type          = type;
 
