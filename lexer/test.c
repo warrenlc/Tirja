@@ -6,7 +6,7 @@
 #include "lexer.h"
 
 int main(void) {
-    const char *string_test = "result = 66+55 - 7 + TestValue;";
+    const char *string_test = "result_1 = 66+55 - 7.99 + Test_Value;";
     printf("Test string is: %s\n", string_test);
     
     int length_string_test = (int)strlen(string_test);
@@ -23,13 +23,14 @@ int main(void) {
         printf("staring another run on the loop, where new_string has value: '%s'\n", new_string);        
         printf("The current character of the test string is: %c\n", char_current);
         /* IF the character is alphanumeric */
-        if (isalpha(char_current)) {
+
+        if ((isalpha(char_current) || char_current == '_') || (isdigit(char_current) && (isalpha(char_previous) || char_previous == '_') )) { 
             strncat(new_string, &char_current, 1);
             printf("new_string: ");
             puts(new_string);
 
             /* Check what is ahead and see if we need to make the token yet. */
-            if (!isalpha(char_next)) {
+            if (!isalnum(char_next) && char_next != '_') {
                 Token *t = token_create(T_NAME, new_string);
                 token_array_add(&t_array, t);
                 printf("token '%s' added\n", new_string);
@@ -37,22 +38,50 @@ int main(void) {
                 free(t);
             }
         }
+
+
+        // if ((isalnum(char_current) || char_current == '_') && !isdigit(char_previous)) {
+        //     strncat(new_string, &char_current, 1);
+        //     printf("new_string: ");
+        //     puts(new_string);
+
+        //     /* Check what is ahead and see if we need to make the token yet. */
+        //     if (!isalpha(char_next) && char_next != '_') {
+        //         Token *t = token_create(T_NAME, new_string);
+        //         token_array_add(&t_array, t);
+        //         printf("token '%s' added\n", new_string);
+        //         memset(new_string, '\0', MAX_TOKEN_LENGTH);
+        //         free(t);
+        //     }
+        // }
         /* IF the character is a digit */
-        else if (isdigit(char_current)) {
+
+        else if ((isdigit(char_current) ) ) { //|| char_current == '.') ){ //&& !isalpha(char_previous) && char_previous != '_') {
             strncat(new_string, &char_current, 1);
             printf("new string: ");
             puts(new_string);
-            if (!isdigit(char_next)) {
+            if (!isdigit(char_next) && char_next != '.') {
                 printf("I got to where we should add the token.\n"
                 "The current value of new_string is: %s\n", new_string);
-
+                
+                /* 
+                    Check that only one '.' is in the new_string and that it does not occur as the last value,
+                    otherwise raise an error
+                */
+                
                 Token *t = token_create(T_NUMBER, new_string);
                 token_array_add(&t_array, t);
                 printf("token '%s' added\n", new_string);
                 memset(new_string, '\0', MAX_TOKEN_LENGTH);
                 free(t);
             }
-            printf("\n\n\n");
+        }
+
+        else if (char_current == '.') {
+            if (isdigit(char_previous) && isdigit(char_next))
+                strncat(new_string, &char_current, 1);
+            else
+                continue; 
         }
 
         else if (char_current == '+') {
