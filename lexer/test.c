@@ -6,8 +6,10 @@
 #include "lexer.h"
 
 int main(void) {
-    const char *string_test = "j = 0; j++; result_1 = 66+(55 - 7.99) / (Test_Value * 11.71); result_1++; j--; 6 % 3;";
-    printf("Test string is: %s\n\n", string_test);
+    int line_number = 1;
+    int column_number = 1;
+    const char *string_test = "j = 0; j++; result_1 = 66+(55 - 7.9.9) / (Test_Value * 11.71); result_1++; j--; 6 % 3;";
+    printf("Test string is: \n%s\n\n", string_test);
     
     int length_string_test = (int)strlen(string_test);
     
@@ -20,6 +22,9 @@ int main(void) {
     #define char_previous string_test[i - 1]
 
     for (int i = 0; i < length_string_test; ++i) { 
+        // printf("staring another run on the loop, where new_string has value: '%s'\n", new_string);        
+        // printf("The current character of the test string is: %c\n", char_current);
+
         /* IF the character is alphanumeric */
 
         if ((isalpha(char_current) || char_current == '_') || (isdigit(char_current) && (isalpha(char_previous) || char_previous == '_') )) { 
@@ -36,21 +41,25 @@ int main(void) {
         else if ((isdigit(char_current) ) ) { 
             strncat(new_string, &char_current, 1);
             
-            if (!isdigit(char_next) && char_next != '.') {
-                
-                /*  TODO:
-                    Check that only one '.' is in the new_string and that it does not occur as the last value,
-                    otherwise raise an error
-                */
+            if (!isdigit(char_next) && char_next != '.') // && is_valid_number_lexeme(new_string) == 1) 
                 token_to_array_from_string(new_string, &t_array, T_NUMBER);
-            }
+            
         }
 
         else if (char_current == '.') {
-            if (isdigit(char_previous) && isdigit(char_next))
+            if (isdigit(char_previous) && isdigit(char_next) && count_char('.', new_string) < 1)
                 strncat(new_string, &char_current, 1);
-            else
-                continue; 
+            else {
+                char *token_bad = (char *)calloc(MAX_TOKEN_LENGTH + 1, sizeof *new_string);
+                strcpy(token_bad, new_string);
+                strncat(token_bad, &char_current, 1);
+                printf("*************** ERROR! **************\n"
+                       "Unexpected character '%c' at line: %d, column: %d.\n"
+                       "Cannot make number token from '%s'.\n", 
+                       char_current, line_number, column_number, token_bad);
+                free(token_bad);
+                break;
+            }
         }
 
         else if (char_current == '+') {
@@ -143,9 +152,15 @@ int main(void) {
         else if (char_current == ' ') {
             continue;
         }
+        else if (char_current == '\n') {
+            line_number++;
+        }
     
-        else
+        else {
             printf("Unrecognized character '%c'\n", char_current);
+            break;
+        }
+        column_number++;
     }
 
     printf("\nTokens:\n");

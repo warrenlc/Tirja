@@ -62,17 +62,41 @@ token_array_free(Token_Array* t_array)
     t_array->capacity = 0;
 }
 
-void token_print(Token *t)
+void 
+token_print(Token *t)
 {
     printf("Token string literal is: '%s'\n",
            t->lexeme); 
 }
 
-void token_to_array_from_string(char *lexeme, Token_Array *t_array, Token_Type type) 
+void 
+token_to_array_from_string(char *lexeme, Token_Array *t_array, Token_Type type) 
 {
     Token *t = token_create(type, lexeme);
     token_array_add(t_array, t);
     // printf("token '%s' added\n", lexeme);
     memset(lexeme, '\0', MAX_TOKEN_LENGTH);
     free(t);
+}
+
+int
+count_char(char c, char *lexeme)
+{
+    int length_lexeme = strlen(lexeme);
+    int count_char = 0;
+    for (int i = 0; i < length_lexeme; i++) {
+        if (lexeme[i] == c) {
+            count_char++;
+        }
+    }
+    return count_char;
+}
+
+int 
+char_at_position(int pos, char c, char *lexeme) 
+{
+    if (lexeme[pos] == c) {
+        return 1;
+    }
+    return -1;
 }
