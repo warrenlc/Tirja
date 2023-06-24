@@ -6,8 +6,8 @@
 #include "lexer.h"
 
 int main(void) {
-    const char *string_test = "j = 0; j++; result_1 = 66+(55 - 7.99) / (Test_Value * 11.71); result_1++; j--;";
-    printf("Test string is: %s\n", string_test);
+    const char *string_test = "j = 0; j++; result_1 = 66+(55 - 7.99) / (Test_Value * 11.71); result_1++; j--; 6 % 3;";
+    printf("Test string is: %s\n\n", string_test);
     
     int length_string_test = (int)strlen(string_test);
     
@@ -20,45 +20,29 @@ int main(void) {
     #define char_previous string_test[i - 1]
 
     for (int i = 0; i < length_string_test; ++i) { 
-        printf("staring another run on the loop, where new_string has value: '%s'\n", new_string);        
-        printf("The current character of the test string is: %c\n", char_current);
         /* IF the character is alphanumeric */
 
         if ((isalpha(char_current) || char_current == '_') || (isdigit(char_current) && (isalpha(char_previous) || char_previous == '_') )) { 
             strncat(new_string, &char_current, 1);
-            printf("new_string: ");
-            puts(new_string);
 
             /* Check what is ahead and see if we need to make the token yet. */
             if (!isalnum(char_next) && char_next != '_') {
-                Token *t = token_create(T_NAME, new_string);
-                token_array_add(&t_array, t);
-                printf("token '%s' added\n", new_string);
-                memset(new_string, '\0', MAX_TOKEN_LENGTH);
-                free(t);
+                token_to_array_from_string(new_string, &t_array, T_NAME);
             }
         }
 
         /* IF the character is a digit */
 
-        else if ((isdigit(char_current) ) ) { //|| char_current == '.') ){ //&& !isalpha(char_previous) && char_previous != '_') {
+        else if ((isdigit(char_current) ) ) { 
             strncat(new_string, &char_current, 1);
-            printf("new string: ");
-            puts(new_string);
+            
             if (!isdigit(char_next) && char_next != '.') {
-                printf("I got to where we should add the token.\n"
-                "The current value of new_string is: %s\n", new_string);
                 
-                /* 
+                /*  TODO:
                     Check that only one '.' is in the new_string and that it does not occur as the last value,
                     otherwise raise an error
                 */
-                
-                Token *t = token_create(T_NUMBER, new_string);
-                token_array_add(&t_array, t);
-                printf("token '%s' added\n", new_string);
-                memset(new_string, '\0', MAX_TOKEN_LENGTH);
-                free(t);
+                token_to_array_from_string(new_string, &t_array, T_NUMBER);
             }
         }
 
@@ -71,135 +55,107 @@ int main(void) {
 
         else if (char_current == '+') {
             strncat(new_string, &char_current, 1);
-            printf("new string: ");
-            puts(new_string);
             
             if (char_next == '+') {
                 strncat(new_string, &char_next, 1);
-                printf("new string: ");
-                puts (new_string);
-
-                Token *t = token_create(T_INCREMENT, new_string);
-                token_array_add(&t_array, t);
-                printf("token '%s' added\n", new_string);
-                memset(new_string, '\0', MAX_TOKEN_LENGTH);
-                free(t);
+                token_to_array_from_string(new_string, &t_array, T_INCREMENT);
                 i++;
                 continue;
             }
             else {            
-                Token *t = token_create(T_PLUS, new_string);
-                token_array_add(&t_array, t);
-                printf("token '%s', added\n", new_string);
-                memset(new_string, '\0', MAX_TOKEN_LENGTH);
-                free(t);
+                token_to_array_from_string(new_string, &t_array, T_PLUS);
             } 
         }
 
         else if (char_current == '-') {
             strncat(new_string, &char_current, 1);
-            printf("new_sring: ");
-            puts(new_string);
 
             if (char_next == '-') {
                 strncat(new_string, &char_next, 1);
-                printf("new_sring: ");
-                puts(new_string);
-                
-                Token *t = token_create(T_DECREMENT, new_string);
-                token_array_add(&t_array, t);
-                printf("token '%s' added\n", new_string);
-                memset(new_string, '\0', MAX_TOKEN_LENGTH);
-                free(t);
+                token_to_array_from_string(new_string, &t_array, T_DECREMENT);                
                 i++;
                 continue;
             }
             else {                 
-                Token *t = token_create(T_MINUS, new_string);
-                token_array_add(&t_array, t);
-                printf("token '%s' added\n", new_string);
-                memset(new_string, '\0', MAX_TOKEN_LENGTH);
-                free(t);
+                token_to_array_from_string(new_string, &t_array, T_MINUS);
             }
         }
 
         else if (char_current == '*') {
             strncat(new_string, &char_current, 1);
-            printf("new_string: ");
-            puts(new_string);
-            Token *t = token_create(T_TIMES, new_string);
-            token_array_add(&t_array, t);
-            printf("token '%s' added\n", new_string);
-            memset(new_string, '\0', MAX_TOKEN_LENGTH);
-            free(t);
+            token_to_array_from_string(new_string, &t_array, T_TIMES);
         }
 
         else if (char_current == '/') {
             strncat(new_string, &char_current, 1);
-            printf("new_string: ");
-            puts(new_string);
-            Token *t = token_create(T_DIVIDE, new_string);
-            token_array_add(&t_array, t);
-            printf("token '%s' added\n", new_string);
-            memset(new_string, '\0', MAX_TOKEN_LENGTH);
-            free(t); 
+            token_to_array_from_string(new_string, &t_array, T_DIVIDE);
         }
         else if (char_current == '(') {
             strncat(new_string, &char_current, 1);
-            printf("new_string: ");
-            puts(new_string);
-            Token *t = token_create(T_LPAREN, new_string);
-            token_array_add(&t_array, t);
-            printf("token '%s', added\n", new_string);
-            memset(new_string, '\0', MAX_TOKEN_LENGTH);
-            free(t);    
+            token_to_array_from_string(new_string, &t_array, T_LPAREN);
         }
 
         else if (char_current == ')') {
             strncat(new_string, &char_current, 1);
-            printf("new_string: ");
-            puts(new_string);
-            Token *t = token_create(T_RPAREN, new_string);
-            token_array_add(&t_array, t);
-            printf("token '%s' added\n", new_string);
-            memset(new_string, '\0', MAX_TOKEN_LENGTH);
-            free(t);
+            token_to_array_from_string(new_string, &t_array, T_RPAREN);
         }
 
         else if (char_current == '=') {
             strncat(new_string, &char_current, 1);
-            printf("new_string: ");
-            puts(new_string);
-            Token *t = token_create(T_EQUALS, new_string);
-            token_array_add(&t_array, t);
-            printf("token '%s' added\n", new_string);
-            memset(new_string, '\0', MAX_TOKEN_LENGTH);
-            free(t);
+            token_to_array_from_string(new_string, &t_array, T_EQUALS);
         }
 
         else if (char_current == ';') {
             strncat(new_string, &char_current, 1);
-            printf("new_string: ");
-            puts(new_string);
-            Token *t = token_create(T_EQUALS, new_string);
-            token_array_add(&t_array, t);
-            printf("token '%s' added\n", new_string);
-            memset(new_string, '\0', MAX_TOKEN_LENGTH);
-            free(t);
+            token_to_array_from_string(new_string, &t_array, T_SEMICOLON);
         }
+
+        else if (char_current == '%') {
+            strncat(new_string, &char_current, 1);
+            token_to_array_from_string(new_string, &t_array, T_MOD); 
+        }
+
+        else if (char_current == '#') {
+            strncat(new_string, &char_current, 1);
+            token_to_array_from_string(new_string, &t_array, T_POWER);
+        }
+
+        else if (char_current == '^') {
+            strncat(new_string, &char_current, 1);
+            token_to_array_from_string(new_string, &t_array, T_XOR);
+        }
+
+        else if (char_current == '~') {
+            strncat(new_string, &char_current, 1);
+            token_to_array_from_string(new_string, &t_array, T_BWNOT);
+        }
+
+        else if (char_current == '&') {
+            strncat(new_string, &char_current, 1);   
+            token_to_array_from_string(new_string, &t_array, T_BWAND);
+        }
+
+        else if (char_current == '|') {
+            strncat(new_string, &char_current, 1);
+            token_to_array_from_string(new_string, &t_array, T_BWOR);
+        }
+    
+        else if (char_current == ' ') {
+            continue;
+        }
+    
         else
             printf("Unrecognized character '%c'\n", char_current);
-        printf("\n\n\n");
-        
-        printf("The next character of the test string is: %c\n\n\n", char_next);
     }
-    
-    printf("and the last non-null character was: %c\n", string_test[length_string_test - 1]);
 
-    printf("the tokens:\n");
+    printf("\nTokens:\n");
     for (int k = 0; k < t_array.size; k++) 
         token_print(&(t_array).tokens[k]);
+    
     free(new_string); 
     token_array_free(&t_array);
+    
+    printf("\n\n");
+
     return 0;
 }

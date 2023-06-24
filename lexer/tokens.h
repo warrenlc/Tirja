@@ -18,6 +18,12 @@ typedef enum Token_Type{
     T_MINUS,
     T_TIMES,
     T_DIVIDE,
+    T_MOD,
+    T_POWER,
+    T_XOR,
+    T_BWNOT,
+    T_BWAND,
+    T_BWOR,
     T_INCREMENT,
     T_DECREMENT,
     T_SEMICOLON

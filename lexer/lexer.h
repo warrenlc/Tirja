@@ -18,5 +18,6 @@ void token_array_init(Token_Array *t_array);
 int token_array_add(Token_Array *t_array, Token *t);
 void token_array_free(Token_Array *ta);
 void token_print(Token *t);
+void token_to_array_from_string(char *lexeme, Token_Array *t_array, Token_Type type);
 
 #endif /* LEXER_H */

@@ -67,3 +67,12 @@ void token_print(Token *t)
     printf("Token string literal is: '%s'\n",
            t->lexeme); 
 }
+
+void token_to_array_from_string(char *lexeme, Token_Array *t_array, Token_Type type) 
+{
+    Token *t = token_create(type, lexeme);
+    token_array_add(t_array, t);
+    // printf("token '%s' added\n", lexeme);
+    memset(lexeme, '\0', MAX_TOKEN_LENGTH);
+    free(t);
+}
