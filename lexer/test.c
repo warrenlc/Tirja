@@ -6,7 +6,7 @@
 #include "lexer.h"
 
 int main(void) {
-    const char *string_test = "result_1 = 66+(55 - 7.99) / (Test_Value * 11.71);";
+    const char *string_test = "j = 0; j++; result_1 = 66+(55 - 7.99) / (Test_Value * 11.71); result_1++; j--;";
     printf("Test string is: %s\n", string_test);
     
     int length_string_test = (int)strlen(string_test);
@@ -75,14 +75,52 @@ int main(void) {
             puts(new_string);
             
             if (char_next == '+') {
-                /**/
+                strncat(new_string, &char_next, 1);
+                printf("new string: ");
+                puts (new_string);
+
+                Token *t = token_create(T_INCREMENT, new_string);
+                token_array_add(&t_array, t);
+                printf("token '%s' added\n", new_string);
+                memset(new_string, '\0', MAX_TOKEN_LENGTH);
+                free(t);
+                i++;
+                continue;
             }
-            
-            Token *t = token_create(T_PLUS, new_string);
-            token_array_add(&t_array, t);
-            printf("token '%s', added\n", new_string);
-            memset(new_string, '\0', MAX_TOKEN_LENGTH);
-            free(t); 
+            else {            
+                Token *t = token_create(T_PLUS, new_string);
+                token_array_add(&t_array, t);
+                printf("token '%s', added\n", new_string);
+                memset(new_string, '\0', MAX_TOKEN_LENGTH);
+                free(t);
+            } 
+        }
+
+        else if (char_current == '-') {
+            strncat(new_string, &char_current, 1);
+            printf("new_sring: ");
+            puts(new_string);
+
+            if (char_next == '-') {
+                strncat(new_string, &char_next, 1);
+                printf("new_sring: ");
+                puts(new_string);
+                
+                Token *t = token_create(T_DECREMENT, new_string);
+                token_array_add(&t_array, t);
+                printf("token '%s' added\n", new_string);
+                memset(new_string, '\0', MAX_TOKEN_LENGTH);
+                free(t);
+                i++;
+                continue;
+            }
+            else {                 
+                Token *t = token_create(T_MINUS, new_string);
+                token_array_add(&t_array, t);
+                printf("token '%s' added\n", new_string);
+                memset(new_string, '\0', MAX_TOKEN_LENGTH);
+                free(t);
+            }
         }
 
         else if (char_current == '*') {
@@ -122,16 +160,6 @@ int main(void) {
             printf("new_string: ");
             puts(new_string);
             Token *t = token_create(T_RPAREN, new_string);
-            token_array_add(&t_array, t);
-            printf("token '%s' added\n", new_string);
-            memset(new_string, '\0', MAX_TOKEN_LENGTH);
-            free(t);
-        }
-        else if (char_current == '-') {
-            strncat(new_string, &char_current, 1);
-            printf("new_sring: ");
-            puts(new_string);
-            Token *t = token_create(T_MINUS, new_string);
             token_array_add(&t_array, t);
             printf("token '%s' added\n", new_string);
             memset(new_string, '\0', MAX_TOKEN_LENGTH);
