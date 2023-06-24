@@ -5,23 +5,24 @@
 
 #include "lexer.h"
 
+
 int main(void) {
     int line_number = 1;
     int column_number = 1;
-    const char *string_test = "j = 0; j++; result_1 = 66+(55 - 7.9.9) / (Test_Value * 11.71); result_1++; j--; 6 % 3;";
-    printf("Test string is: \n%s\n\n", string_test);
+    const char *string_test_invalid = "j = 0; j++; result_1 = 66+(55 - 7.9.9) / (Test_Value * 11.71); result_1++; j--; 6 % 3;";
+    printf("Test string is: \n%s\n\n", string_test_invalid);
     
-    int length_string_test = (int)strlen(string_test);
+    int length_string_test_invalid = (int)strlen(string_test_invalid);
     
     char *new_string = (char *)calloc(MAX_TOKEN_LENGTH + 1, sizeof *new_string);
     Token_Array t_array;
     token_array_init(&t_array);
     
-    #define char_current  string_test[i]
-    #define char_next     string_test[i + 1]
-    #define char_previous string_test[i - 1]
+    #define char_current  string_test_invalid[i]
+    #define char_next     string_test_invalid[i + 1]
+    #define char_previous string_test_invalid[i - 1]
 
-    for (int i = 0; i < length_string_test; ++i) { 
+    for (int i = 0; i < length_string_test_invalid; ++i) { 
         // printf("staring another run on the loop, where new_string has value: '%s'\n", new_string);        
         // printf("The current character of the test string is: %c\n", char_current);
 
@@ -41,9 +42,8 @@ int main(void) {
         else if ((isdigit(char_current) ) ) { 
             strncat(new_string, &char_current, 1);
             
-            if (!isdigit(char_next) && char_next != '.') // && is_valid_number_lexeme(new_string) == 1) 
+            if (!isdigit(char_next) && char_next != '.') 
                 token_to_array_from_string(new_string, &t_array, T_NUMBER);
-            
         }
 
         else if (char_current == '.') {
