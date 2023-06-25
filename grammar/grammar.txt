@@ -60,35 +60,35 @@
 
 ** TOKENS **
 
-SEMICOLON               ::= \;
-LPAREN                  ::= \(
-RPAREN                  ::= \)
-INCREMENT               ::= [\+]{2}
-DECREMENT               ::= [\-]{2}
-MINUS                   ::= [\-]{1}
-BWNOT                   ::= \~
-POUND                   ::= \#
-TIMES                   ::= \*
-DIV                     ::= \/
-MOD                     ::= \%
-PLUS                    ::= \+
-BWLEFT                  ::= [\<]{2}
-BWRIGHT                 ::= [\>]{2}
-BWAND                   ::= [\&]{1}
-XOR                     ::= \^
-BWOR                    ::= \|
-NOT                     ::= \!
-AND                     ::= [\&]{2}
-OR                      ::= [\|]{2}
-LESS_T                  ::= \<
-GREATER_T               ::= \>
-EQUIVALENT              ::= [\=]{2}
-NOT_EQUIVALENT          ::= \!\=
-LESS_T_EQ               ::= \<\=
-GREATER_T_EQ            ::= \>\=
-TRUE                    ::= "true"
-FALSE                   ::= "false"
-NUMBER                  ::= \d+\.?\d*
-VAR_NAME                ::= [a-z\_]+[a-zA-Z\_0-9]*
+SEMICOLON               ::= \;                          %%
+LPAREN                  ::= \(                          %%
+RPAREN                  ::= \)                          %%
+INCREMENT               ::= [\+]{2}                     %%
+DECREMENT               ::= [\-]{2}                     %%
+MINUS                   ::= [\-]{1}                     %%
+BWNOT                   ::= \~                          %%
+POUND                   ::= \#                          %%
+TIMES                   ::= \*                          %%
+DIV                     ::= \/                          %%
+MOD                     ::= \%                          %%
+PLUS                    ::= \+                          %%
+BWLEFT                  ::= [\<]{2}                     %%
+BWRIGHT                 ::= [\>]{2}                     %%
+BWAND                   ::= [\&]{1}                     %%
+XOR                     ::= \^                          %%
+BWOR                    ::= \|                          %%
+NOT                     ::= \!                          %%
+AND                     ::= [\&]{2}                     %%
+OR                      ::= [\|]{2}                     %%
+LESS_T                  ::= \<                          %%
+GREATER_T               ::= \>                          %%
+EQUIVALENT              ::= [\=]{2}                     %% 
+NOT_EQUIVALENT          ::= \!\=                        %%
+LESS_T_EQ               ::= \<\=                        %%
+GREATER_T_EQ            ::= \>\=                        %%
+TRUE                    ::= "True"                      %%
+FALSE                   ::= "False"                     %%
+NUMBER                  ::= \d+\.?\d*                   %%
+VAR_NAME                ::= [a-z\_]+[a-zA-Z\_0-9]*      %%
 
 
