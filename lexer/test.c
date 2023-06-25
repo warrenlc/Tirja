@@ -6,171 +6,87 @@
 #include "lexer.h"
 
 
-int main(void) {
-    int line_number = 1;
-    int column_number = 1;
-    const char *string_test_invalid = "j = 0; j++; result_1 = 66+(55 - 7.9.9) / (Test_Value * 11.71); result_1++; j--; 6 % 3;";
-    printf("Test string is: \n%s\n\n", string_test_invalid);
-    
-    int length_string_test_invalid = (int)strlen(string_test_invalid);
-    
-    char *new_string = (char *)calloc(MAX_TOKEN_LENGTH + 1, sizeof *new_string);
-    Token_Array t_array;
-    token_array_init(&t_array);
-    
-    #define char_current  string_test_invalid[i]
-    #define char_next     string_test_invalid[i + 1]
-    #define char_previous string_test_invalid[i - 1]
 
-    for (int i = 0; i < length_string_test_invalid; ++i) { 
-        // printf("staring another run on the loop, where new_string has value: '%s'\n", new_string);        
-        // printf("The current character of the test string is: %c\n", char_current);
+int test(const char *test_string, char* lexemes_expected[], size_t size_lexemes_expected) {
+    Token_Array t_array = token_array_from_string(test_string);
 
-        /* IF the character is alphanumeric */
-
-        if ((isalpha(char_current) || char_current == '_') || (isdigit(char_current) && (isalpha(char_previous) || char_previous == '_') )) { 
-            strncat(new_string, &char_current, 1);
-
-            /* Check what is ahead and see if we need to make the token yet. */
-            if (!isalnum(char_next) && char_next != '_') {
-                token_to_array_from_string(new_string, &t_array, T_NAME);
-            }
+    for (int i = 0; i < t_array.size; i++) {
+        if (strncmp(lexemes_expected[i], t_array.tokens[i].lexeme, size_lexemes_expected) != 0) {
+            fprintf(stderr, "Fail at: %s", t_array.tokens[i].lexeme);
+            token_array_free(&t_array);
+            return -1;
         }
-
-        /* IF the character is a digit */
-
-        else if ((isdigit(char_current) ) ) { 
-            strncat(new_string, &char_current, 1);
-            
-            if (!isdigit(char_next) && char_next != '.') 
-                token_to_array_from_string(new_string, &t_array, T_NUMBER);
-        }
-
-        else if (char_current == '.') {
-            if (isdigit(char_previous) && isdigit(char_next) && count_char('.', new_string) < 1)
-                strncat(new_string, &char_current, 1);
-            else {
-                char *token_bad = (char *)calloc(MAX_TOKEN_LENGTH + 1, sizeof *new_string);
-                strcpy(token_bad, new_string);
-                strncat(token_bad, &char_current, 1);
-                printf("*************** ERROR! **************\n"
-                       "Unexpected character '%c' at line: %d, column: %d.\n"
-                       "Cannot make number token from '%s'.\n", 
-                       char_current, line_number, column_number, token_bad);
-                free(token_bad);
-                break;
-            }
-        }
-
-        else if (char_current == '+') {
-            strncat(new_string, &char_current, 1);
-            
-            if (char_next == '+') {
-                strncat(new_string, &char_next, 1);
-                token_to_array_from_string(new_string, &t_array, T_INCREMENT);
-                i++;
-                continue;
-            }
-            else {            
-                token_to_array_from_string(new_string, &t_array, T_PLUS);
-            } 
-        }
-
-        else if (char_current == '-') {
-            strncat(new_string, &char_current, 1);
-
-            if (char_next == '-') {
-                strncat(new_string, &char_next, 1);
-                token_to_array_from_string(new_string, &t_array, T_DECREMENT);                
-                i++;
-                continue;
-            }
-            else {                 
-                token_to_array_from_string(new_string, &t_array, T_MINUS);
-            }
-        }
-
-        else if (char_current == '*') {
-            strncat(new_string, &char_current, 1);
-            token_to_array_from_string(new_string, &t_array, T_TIMES);
-        }
-
-        else if (char_current == '/') {
-            strncat(new_string, &char_current, 1);
-            token_to_array_from_string(new_string, &t_array, T_DIVIDE);
-        }
-        else if (char_current == '(') {
-            strncat(new_string, &char_current, 1);
-            token_to_array_from_string(new_string, &t_array, T_LPAREN);
-        }
-
-        else if (char_current == ')') {
-            strncat(new_string, &char_current, 1);
-            token_to_array_from_string(new_string, &t_array, T_RPAREN);
-        }
-
-        else if (char_current == '=') {
-            strncat(new_string, &char_current, 1);
-            token_to_array_from_string(new_string, &t_array, T_EQUALS);
-        }
-
-        else if (char_current == ';') {
-            strncat(new_string, &char_current, 1);
-            token_to_array_from_string(new_string, &t_array, T_SEMICOLON);
-        }
-
-        else if (char_current == '%') {
-            strncat(new_string, &char_current, 1);
-            token_to_array_from_string(new_string, &t_array, T_MOD); 
-        }
-
-        else if (char_current == '#') {
-            strncat(new_string, &char_current, 1);
-            token_to_array_from_string(new_string, &t_array, T_POWER);
-        }
-
-        else if (char_current == '^') {
-            strncat(new_string, &char_current, 1);
-            token_to_array_from_string(new_string, &t_array, T_XOR);
-        }
-
-        else if (char_current == '~') {
-            strncat(new_string, &char_current, 1);
-            token_to_array_from_string(new_string, &t_array, T_BWNOT);
-        }
-
-        else if (char_current == '&') {
-            strncat(new_string, &char_current, 1);   
-            token_to_array_from_string(new_string, &t_array, T_BWAND);
-        }
-
-        else if (char_current == '|') {
-            strncat(new_string, &char_current, 1);
-            token_to_array_from_string(new_string, &t_array, T_BWOR);
-        }
-    
-        else if (char_current == ' ') {
-            continue;
-        }
-        else if (char_current == '\n') {
-            line_number++;
-        }
-    
-        else {
-            printf("Unrecognized character '%c'\n", char_current);
-            break;
-        }
-        column_number++;
     }
-
-    printf("\nTokens:\n");
-    for (int k = 0; k < t_array.size; k++) 
-        token_print(&(t_array).tokens[k]);
-    
-    free(new_string); 
+    /* Free t_array now that we are done with it */
     token_array_free(&t_array);
+    return 1;
+}
+
+int main(void) {
+
+    /* TEST 1 
+     *  a string that has an extra decimal point. This should not produce a token.
+     */
+    const char *test_too_many_decimals = "j = 0; j++; result_1 = 66+(55 - 7.9.9) / (Test_Value * 11.71); result_1++; j--; 6 % 3;";
+    char* test_too_many_decimals_expected[] = {
+        "j"         ,  "="  , "0"   ,  ";"  , "j"  , "++"  , ";", 
+        "result_1"  ,  "="  , "66"  ,  "+"  , "("  , "55"  , "-"
+    };
+    size_t size_too_many_decimals_expected = sizeof test_too_many_decimals_expected / sizeof *test_too_many_decimals_expected;
+    test(test_too_many_decimals, test_too_many_decimals_expected, size_too_many_decimals_expected) == 1 
+    ? fprintf(stdout, "\nPASS test 1: too_many_decimals\n") : fprintf(stderr, "\nFAIL test 1: too_many_decimals\n");
+
+
+    /* TEST 2 
+     *  a valid input string. 
+     */
+    const char *test_valid_decimals = 
+        "j = 0; j++; result_1 = 66+(55 - 7.99) / (Test_Value * 11.71); result_1++; j--; 6 % 3;";
+    char* test_valid_decimals_expected[] = 
+        {
+            "j"  ,  "="  ,  "0"          ,  ";"   ,  "j"      ,  "++" ,  ";"     ,  "result_1" ,  
+            "="  ,  "66" ,  "+"          ,  "("   ,  "55"     ,  "-"  ,  "7.99"  ,  ")"        ,  
+            "/"  ,  "("  ,  "Test_Value" ,  "*"   ,  "11.71"  ,  ")"  ,  ";"     ,  "result_1" ,  
+            "++" ,  ";"  ,  "j"          ,  "--"  ,  ";"      ,  "6"  ,  "%"     ,  "3"        ,  
+            ";"
+        };
+    size_t size_valid_decimals_expected = sizeof test_valid_decimals_expected / sizeof *test_valid_decimals_expected;
+    test(test_valid_decimals, test_valid_decimals_expected, size_valid_decimals_expected) == 1
+        ? fprintf(stdout, "\nPASS test 2: valid decimals\n") : fprintf(stderr, "\nFAIL test 2: valid_decimals\n");
+
+
+    /* TEST 3
+    * Testing invalid increment operator. This should tokenize but would fail later
+    * during syntactic analysis. We just want to test that tokens are produced as we expect.
+    */
+    const char *test_invalid_increment      = "j = 0; j+++;";
+    char *test_invalid_increment_expected[] = { "j", "=", "0", ";", "j", "++", "+", ";" };
+    size_t size_invalid_increment_expected  = sizeof test_invalid_increment_expected / sizeof *test_invalid_increment_expected;
+    test(test_invalid_increment, test_invalid_increment_expected, size_invalid_increment_expected) == 1
+        ? fprintf(stdout, "\nPASS test 3: invalid_increment\n") : fprintf(stderr, "\nFAIL test 3: invalid_increment\n");
+
+
+    /* TEST 4
+    * Testing variations of '<' char, including <, <=, <<
+    */
+    const char *test_lt_symbol      = "k=0;k<8;k<=0;k<<;";
+    char *test_lt_symbol_expected[] = 
+        {
+            "k" , "=" , "0" , ";"  , "k"  , 
+            "<" , "8" , ";" , "k"  , "<=" , 
+            "0" , ";" , "k" , "<<" , ";"
+        };
+    size_t size_lt_symbol_expected = sizeof test_lt_symbol_expected / sizeof *test_lt_symbol_expected;
+    test(test_lt_symbol, test_lt_symbol_expected, size_lt_symbol_expected) == 1
+        ? fprintf(stdout, "\nPASS test 4: lt_symbol\n") : fprintf(stderr, "\nFAIL test 4: lt_sybmol\n");
+
+
+    /* TEST 5
+    * 
+    */    
+    
+    
     
     printf("\n\n");
-
     return 0;
 }
