@@ -158,6 +158,11 @@ char_at_position(int pos, char c, char *lexeme)
 Token_Array
 token_array_get_from_string(const char *string_input) 
 {
+    #define char_current  string_input[i]
+    #define char_next     string_input[i + 1]
+    #define char_previous string_input[i - 1]
+    #define TOKEN_TO_ARRAY(type) token_to_array_from_string(lexeme_new, &t_array, type);
+
     int line_number = 1;
     int column_number = 1;
     //printf("Test string is: \n%s\n\n", string_input);
@@ -168,9 +173,7 @@ token_array_get_from_string(const char *string_input)
     Token_Array t_array;
     token_array_init(&t_array);
     
-    #define char_current  string_input[i]
-    #define char_next     string_input[i + 1]
-    #define char_previous string_input[i - 1]
+
 
     for (int i = 0; i < length_string_input; ++i) { 
         // printf("staring another run on the loop, where lexeme_new has value: '%s'\n", lexeme_new);        
@@ -178,13 +181,15 @@ token_array_get_from_string(const char *string_input)
 
         /* IF the character is alphanumeric */
 
-        if ((isalpha(char_current) || char_current == '_') || (isdigit(char_current) && (isalpha(char_previous) || char_previous == '_') )) { 
+        if ((isalpha(char_current) || char_current == '_') || 
+            (isdigit(char_current) && (isalpha(char_previous) || char_previous == '_') )) { 
             strncat(lexeme_new, &char_current, 1);
             
             /* Check what is ahead and see if we need to make the token yet. */
             if (!isalnum(char_next) && char_next != '_') {
                 if (strncmp(lexeme_new, "True", 4) == 0) {
-                    token_to_array_from_string(lexeme_new, &t_array, T_TRUE);
+                    TOKEN_TO_ARRAY(T_TRUE);
+                    //token_to_array_from_string(lexeme_new, &t_array, T_TRUE);
                 }
                 else if (strncmp(lexeme_new, "False", 5) == 0) {
                     token_to_array_from_string(lexeme_new, &t_array, T_FALSE);
