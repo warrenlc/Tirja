@@ -24,6 +24,7 @@ void token_array_print(Token_Array *t_array);
 int char_count(char c, char *lexeme);
 int char_at_position(int pos, char c, char *lexeme);
 Token_Array token_array_get_from_string(const char *string_input);
-int token_match(size_t position, char *input_string, char* to_match);
+Token_Type  token_word_match(char *lexeme);
+int is_identifier(const char current, const char previous);
 
 #endif /* LEXER_H */

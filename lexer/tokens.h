@@ -40,7 +40,12 @@ typedef enum Token_Type{
     T_NUMBER,
     T_NAME, 
     T_EQUALS,
- 
+    T_IF,
+    T_DO,
+    T_FOR,
+    T_ELSE,
+    T_THEN,
+    T_WHILE
 }Token_Type;
 
 /* A Token has a type and a string representation, aka 'lexeme' */

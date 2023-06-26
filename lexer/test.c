@@ -8,6 +8,7 @@
 int 
 token_array_compare(const char *test_string, char* lexemes_expected[], size_t size_lexemes_expected) 
 {
+    printf("Test string_: %s\n", test_string);
     Token_Array t_array = token_array_get_from_string(test_string);
     //token_array_print(&t_array);
     for (int i = 0; i < t_array.size; i++) {

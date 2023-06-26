@@ -2,10 +2,8 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
-#include "lexer.h"
 
-#define consume_current strncat(lexeme_new, &char_current, 1)
-#define consume_next    strncat(lexeme_new, &char_next, 1)
+#include "lexer.h"
 
 Token*
 token_create(Token_Type type, char *string_token)
@@ -120,7 +118,6 @@ token_to_array_from_string(char *lexeme, Token_Array *t_array, Token_Type type)
 {
     Token *t = token_create(type, lexeme);
     token_array_add(t_array, t);
-    // printf("token '%s' added\n", lexeme);
     memset(lexeme, '\0', MAX_TOKEN_LENGTH);
     free(t);
 }
@@ -158,9 +155,312 @@ char_at_position(int pos, char c, char *lexeme)
 Token_Array
 token_array_get_from_string(const char *string_input) 
 {
-    #define char_current  string_input[i]
-    #define char_next     string_input[i + 1]
-    #define char_previous string_input[i - 1]
+    #define CHAR_CURRENT            string_input[i]
+    #define CHAR_NEXT               string_input[i + 1]
+    #define CHAR_PREVIOUS           string_input[i - 1]
+    #define CONSUME_CURRENT         strncat(lexeme_new, &CHAR_CURRENT, 1)
+    #define CONSUME_NEXT            strncat(lexeme_new, &CHAR_NEXT, 1)
+    #define TOKEN_TO_ARRAY(type)    token_to_array_from_string(lexeme_new, &t_array, type);
+
+    /**
+     *  Keep track of where we are in the input string.
+    */
+    int line_number     = 1;
+    int column_number   = 1;
+
+    int length_string_input = (int)strlen(string_input);
+    
+    char *lexeme_new = (char *)calloc(MAX_TOKEN_LENGTH + 1, sizeof *lexeme_new);
+    
+    /**
+     *  Declare and initialize a dynamic array to store found tokens.
+    */
+    Token_Array t_array;
+    token_array_init(&t_array);
+
+    /**
+     *  Begin scanning
+    */
+    for (int i = 0; i < length_string_input; ++i) { 
+        
+        if (is_identifier(CHAR_CURRENT, CHAR_PREVIOUS) == 1) {
+            //strncat(lexeme_new, &CHAR_CURRENT, 1);
+            CONSUME_CURRENT;
+            /* Check what is ahead and see if we need to make the token yet. */
+            if (!isalnum(CHAR_NEXT) && CHAR_NEXT != '_') {
+                /**
+                 *  If the next character is not alphanumeric or '_' then we have reached the end 
+                 *  of the lexeme and can make a token and add it to the array
+                 *  token_word_match() will return the proper Token_Type based on the value
+                 *  of lexeme_new.
+                */
+                TOKEN_TO_ARRAY(token_word_match(lexeme_new));
+            }
+        }
+
+        /* IF the character is a digit */
+        else if ((isdigit(CHAR_CURRENT) ) ) { 
+            CONSUME_CURRENT; //strncat(lexeme_new, &CHAR_CURRENT, 1);
+            if (!isdigit(CHAR_NEXT) && CHAR_NEXT != '.')  
+                TOKEN_TO_ARRAY(T_NUMBER);//token_to_array_from_string(lexeme_new, &t_array, T_NUMBER);   
+        }
+
+        else if (CHAR_CURRENT == '.') {
+            if (isdigit(CHAR_PREVIOUS) && isdigit(CHAR_NEXT) && char_count('.', lexeme_new) < 1)
+                CONSUME_CURRENT; //strncat(lexeme_new, &CHAR_CURRENT, 1);
+            else {
+                /**
+                 *  Print an error message as to why this does not work. Will replace with a consistent, repeatable function in the future.
+                */
+                char *token_bad = (char *)calloc(MAX_TOKEN_LENGTH + 1, sizeof *lexeme_new);
+                strcpy(token_bad, lexeme_new);
+                strncat(token_bad, &CHAR_CURRENT, 1);
+                printf("*************** ERROR! **************\n"
+                       "Unexpected character '%c' at line: %d, column: %d.\n"
+                       "Cannot make number token from '%s'.\n", 
+                       CHAR_CURRENT, line_number, column_number, token_bad);
+                free(token_bad);
+                break;
+            }
+        }
+
+        else if (CHAR_CURRENT == '+') {
+            CONSUME_CURRENT; //strncat(lexeme_new, &CHAR_CURRENT, 1);
+            
+            if (CHAR_NEXT == '+') {
+                /* If the next character is also '+', then we have matched the increment operator '++' 
+                 * Consume the next character and add the token to the array.
+                 */
+                CONSUME_NEXT; //strncat(lexeme_new, &CHAR_NEXT, 1);
+                TOKEN_TO_ARRAY(T_INCREMENT); //token_to_array_from_string(lexeme_new, &t_array, T_INCREMENT);
+                i++;        /* Advance the character (we also consumed the next character) */ 
+                continue;   /* and start the next iteration */
+            }
+            else {            
+                /* Otherwise it is a simple '+' character */ //token_to_array_from_string(lexeme_new, &t_array, T_PLUS);
+                TOKEN_TO_ARRAY(T_PLUS);
+            } 
+        }
+
+        else if (CHAR_CURRENT == '-') {
+            CONSUME_CURRENT; //strncat(lexeme_new, &CHAR_CURRENT, 1);
+
+            if (CHAR_NEXT == '-') {
+                CONSUME_NEXT; //strncat(lexeme_new, &CHAR_NEXT, 1);
+                TOKEN_TO_ARRAY(T_DECREMENT); //token_to_array_from_string(lexeme_new, &t_array, T_DECREMENT);                
+                i++;        /* Advance the character */
+                continue;   /* and start the next iteration */
+            }
+            else {                 
+                TOKEN_TO_ARRAY(T_MINUS); //token_to_array_from_string(lexeme_new, &t_array, T_MINUS);
+            }
+        }
+
+        else if (CHAR_CURRENT == '<') {
+            CONSUME_CURRENT; //strncat(lexeme_new, &CHAR_CURRENT, 1);
+
+            if (CHAR_NEXT == '<') {
+                CONSUME_NEXT; //strncat(lexeme_new, &CHAR_NEXT, 1);
+                TOKEN_TO_ARRAY(T_BWLEFT); //token_to_array_from_string(lexeme_new, &t_array, T_BWLEFT);
+                i++;        /* Advance the character */
+                continue;   /* and start the next iteration */
+            }
+
+            else if (CHAR_NEXT == '=') {
+                strncat(lexeme_new, &CHAR_NEXT, 1);
+                token_to_array_from_string(lexeme_new, &t_array, T_LESS_T_EQ);
+                i++;
+                continue;
+            }
+
+            else {
+                token_to_array_from_string(lexeme_new, &t_array, T_LESS_T);
+            }
+        } 
+
+        else if (CHAR_CURRENT == '>') {
+            strncat(lexeme_new, &CHAR_CURRENT, 1);
+
+            if (CHAR_NEXT == '>') {
+                strncat(lexeme_new, &CHAR_NEXT, 1);
+                token_to_array_from_string(lexeme_new, &t_array, T_BWRIGHT);
+                i++;
+                continue;
+            }
+            else if (CHAR_NEXT == '=') {
+                strncat(lexeme_new, &CHAR_NEXT, 1);
+                token_to_array_from_string(lexeme_new, &t_array, T_GREATER_T_EQ);
+                i++;
+                continue;
+            }
+            else {
+                token_to_array_from_string(lexeme_new, &t_array, T_GREATER_T);
+            }
+        }
+
+        else if (CHAR_CURRENT == '*') {
+            strncat(lexeme_new, &CHAR_CURRENT, 1);
+            token_to_array_from_string(lexeme_new, &t_array, T_TIMES);
+        }
+
+        else if (CHAR_CURRENT == '/') {
+            strncat(lexeme_new, &CHAR_CURRENT, 1);
+            token_to_array_from_string(lexeme_new, &t_array, T_DIVIDE);
+        }
+        else if (CHAR_CURRENT == '(') {
+            strncat(lexeme_new, &CHAR_CURRENT, 1);
+            token_to_array_from_string(lexeme_new, &t_array, T_LPAREN);
+        }
+
+        else if (CHAR_CURRENT == ')') {
+            strncat(lexeme_new, &CHAR_CURRENT, 1);
+            token_to_array_from_string(lexeme_new, &t_array, T_RPAREN);
+        }
+
+        else if (CHAR_CURRENT == '=') {
+            strncat(lexeme_new, &CHAR_CURRENT, 1);
+            if (CHAR_NEXT == '=') {
+                strncat(lexeme_new, &CHAR_NEXT, 1);
+                token_to_array_from_string(lexeme_new, &t_array, T_EQUIVALENT);
+                i++;
+                continue;
+            }
+            else {
+                token_to_array_from_string(lexeme_new, &t_array, T_EQUALS);
+            }
+        }
+
+        else if (CHAR_CURRENT == ';') {
+            strncat(lexeme_new, &CHAR_CURRENT, 1);
+            token_to_array_from_string(lexeme_new, &t_array, T_SEMICOLON);
+        }
+
+        else if (CHAR_CURRENT == '%') {
+            strncat(lexeme_new, &CHAR_CURRENT, 1);
+            token_to_array_from_string(lexeme_new, &t_array, T_MOD); 
+        }
+
+        else if (CHAR_CURRENT == '#') {
+            strncat(lexeme_new, &CHAR_CURRENT, 1);
+            token_to_array_from_string(lexeme_new, &t_array, T_POWER);
+        }
+
+        else if (CHAR_CURRENT == '^') {
+            strncat(lexeme_new, &CHAR_CURRENT, 1);
+            token_to_array_from_string(lexeme_new, &t_array, T_XOR);
+        }
+
+        else if (CHAR_CURRENT == '~') {
+            strncat(lexeme_new, &CHAR_CURRENT, 1);
+            token_to_array_from_string(lexeme_new, &t_array, T_BWNOT);
+        }
+
+        else if (CHAR_CURRENT == '&') {
+            strncat(lexeme_new, &CHAR_CURRENT, 1);  
+            
+            if (CHAR_NEXT == '&') {
+                strncat(lexeme_new, &CHAR_NEXT, 1);
+                token_to_array_from_string(lexeme_new, &t_array, T_AND);
+                i++;
+                continue;
+            } 
+            else {
+                token_to_array_from_string(lexeme_new, &t_array, T_BWAND);
+            }
+        }
+
+        else if (CHAR_CURRENT == '|') {
+            strncat(lexeme_new, &CHAR_CURRENT, 1);
+
+            if (CHAR_NEXT == '|') {
+                strncat(lexeme_new, &CHAR_NEXT, 1);
+                token_to_array_from_string(lexeme_new, &t_array, T_OR);
+                i++;
+                continue;
+            }
+            else {
+                token_to_array_from_string(lexeme_new, &t_array, T_BWOR);
+            }
+        }
+
+        else if (CHAR_CURRENT == '!') {
+            strncat(lexeme_new, &CHAR_CURRENT, 1);
+
+            if (CHAR_NEXT == '=') {
+                strncat(lexeme_new, &CHAR_NEXT, 1);
+                token_to_array_from_string(lexeme_new, &t_array, T_NOT_EQUIVALENT);
+                i++; 
+                continue;
+            }
+            else {
+                token_to_array_from_string(lexeme_new, &t_array, T_NOT);
+            }
+        }
+
+        else if (CHAR_CURRENT == ' ') {
+            column_number++;   
+            continue;
+        }
+        else if (CHAR_CURRENT == '\n') {
+            line_number++;
+        }
+    
+        else {
+            printf("Unrecognized character '%c'\n", CHAR_CURRENT);
+        }
+        column_number++;
+    }
+    free(lexeme_new);
+    
+    #undef CHAR_CURRENT    
+    #undef CHAR_PREVIOUS
+    #undef CHAR_NEXT
+    #undef TOKEN_TO_ARRAY
+    
+    return t_array;
+}
+
+Token_Type 
+token_word_match(char *lexeme) 
+{
+    int size_lexeme = strlen(lexeme);
+    switch(size_lexeme) {
+        case 2:
+            if (strncmp (lexeme, "if", 2) == 0)
+                return T_IF;
+            if (strncmp (lexeme, "do", 2) == 0)
+                return T_DO;
+            break;
+        case 3:
+            if (strncmp (lexeme, "for", 3) == 0)
+                return T_FOR;
+            break;
+        case 4:
+            if (strncmp(lexeme, "else", 4) == 0)
+                return T_ELSE;
+            if (strncmp(lexeme, "then", 4) == 0)
+                return T_THEN;
+            if (strncmp(lexeme, "True", 4) == 0)
+                return T_TRUE;
+            break;
+        case 5:
+            if (strncmp(lexeme, "while", 5) == 0)
+                return T_WHILE;
+            if (strncmp(lexeme, "False", 5) == 0)
+                return T_FALSE;
+            break;
+        default:
+            break; 
+    }   
+    return T_NAME;
+}
+
+void
+token_array_create_from_string(const char *string_input) 
+{
+    #define CHAR_CURRENT  string_input[i]
+    #define CHAR_NEXT     string_input[i + 1]
+    #define CHAR_PREVIOUS string_input[i - 1]
     #define TOKEN_TO_ARRAY(type) token_to_array_from_string(lexeme_new, &t_array, type);
 
     int line_number = 1;
@@ -172,251 +472,206 @@ token_array_get_from_string(const char *string_input)
     char *lexeme_new = (char *)calloc(MAX_TOKEN_LENGTH + 1, sizeof *lexeme_new);
     Token_Array t_array;
     token_array_init(&t_array);
-    
-
 
     for (int i = 0; i < length_string_input; ++i) { 
-        // printf("staring another run on the loop, where lexeme_new has value: '%s'\n", lexeme_new);        
-        // printf("The current character of the test string is: %c\n", char_current);
-
-        /* IF the character is alphanumeric */
-
-        if ((isalpha(char_current) || char_current == '_') || 
-            (isdigit(char_current) && (isalpha(char_previous) || char_previous == '_') )) { 
-            strncat(lexeme_new, &char_current, 1);
-            
-            /* Check what is ahead and see if we need to make the token yet. */
-            if (!isalnum(char_next) && char_next != '_') {
-                if (strncmp(lexeme_new, "True", 4) == 0) {
-                    TOKEN_TO_ARRAY(T_TRUE);
-                    //token_to_array_from_string(lexeme_new, &t_array, T_TRUE);
+        switch (CHAR_CURRENT) {
+            case 'A':
+            case 'B':
+            case 'C':
+            case 'D':
+            case 'E':
+            case 'F':
+            case 'G':
+            case 'H':
+            case 'I':
+            case 'J':
+            case 'K':
+            case 'L':
+            case 'M':
+            case 'N':
+            case 'O':
+            case 'P':
+            case 'Q':
+            case 'R':
+            case 'S':
+            case 'T':
+            case 'U':
+            case 'V':
+            case 'W':
+            case 'X':
+            case 'Y':
+            case 'Z':
+            case 'a':
+            case 'b':
+            case 'c':
+            case 'd':
+            case 'e':
+            case 'f':
+            case 'g':
+            case 'h':
+            case 'i':
+            case 'j':
+            case 'k':
+            case 'l':
+            case 'm':
+            case 'n':
+            case 'o':
+            case 'p':
+            case 'q':
+            case 'r':
+            case 's':
+            case 't':
+            case 'u':
+            case 'v':
+            case 'w':
+            case 'x':
+            case 'y':
+            case 'z':
+            case '_': {  
+                strncat(lexeme_new, &CHAR_CURRENT, 1);
+                if (!isalnum(CHAR_NEXT) && '_' != CHAR_NEXT) {
+                    TOKEN_TO_ARRAY(token_word_match(lexeme_new));
                 }
-                else if (strncmp(lexeme_new, "False", 5) == 0) {
-                    token_to_array_from_string(lexeme_new, &t_array, T_FALSE);
+                break;
+            }           
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9': {
+                strncat(lexeme_new, &CHAR_CURRENT, 1);
+                if (!isdigit(CHAR_NEXT) && '.' != CHAR_NEXT) {
+                    TOKEN_TO_ARRAY(T_NUMBER);
+                }
+                break;
+            } 
+            case '.': {
+                if (isdigit(CHAR_PREVIOUS) && isdigit(CHAR_NEXT) && char_count('.', lexeme_new) < 1) {
+                    strncat(lexeme_new, &CHAR_CURRENT, 1);
                 }
                 else {
-                    token_to_array_from_string(lexeme_new, &t_array, T_NAME);
+                    printf("Invalid decimal point at line %d, column %d\n", line_number, column_number);
+                    break;
                 }
             }
-        }
-
-        /* IF the character is a digit */
-
-        else if ((isdigit(char_current) ) ) { 
-            strncat(lexeme_new, &char_current, 1);
-            
-            if (!isdigit(char_next) && char_next != '.') // && is_valid_number_lexeme(lexeme_new) == 1) 
-                token_to_array_from_string(lexeme_new, &t_array, T_NUMBER);
-            
-        }
-
-        else if (char_current == '.') {
-            if (isdigit(char_previous) && isdigit(char_next) && char_count('.', lexeme_new) < 1)
-                strncat(lexeme_new, &char_current, 1);
-            else {
-                char *token_bad = (char *)calloc(MAX_TOKEN_LENGTH + 1, sizeof *lexeme_new);
-                strcpy(token_bad, lexeme_new);
-                strncat(token_bad, &char_current, 1);
-                printf("*************** ERROR! **************\n"
-                       "Unexpected character '%c' at line: %d, column: %d.\n"
-                       "Cannot make number token from '%s'.\n", 
-                       char_current, line_number, column_number, token_bad);
-                free(token_bad);
+            case '+': {
+                strncat(lexeme_new, &CHAR_CURRENT, 1);
+                if ('+' == CHAR_NEXT) {
+                    strncat(lexeme_new, &CHAR_NEXT, 1);
+                    TOKEN_TO_ARRAY(T_INCREMENT);
+                    i++;
+                    continue;
+                }
+                else {
+                    TOKEN_TO_ARRAY(T_PLUS);
+                }
+            }
+            case '-': {
+                strncat(lexeme_new, &CHAR_CURRENT, 1);
+                if ('-' == CHAR_NEXT) {
+                    strncat(lexeme_new, &CHAR_NEXT, 1);
+                    TOKEN_TO_ARRAY(T_DECREMENT);
+                    i++;
+                    continue;
+                }
+                else {
+                    TOKEN_TO_ARRAY(T_MINUS);
+                }
+            }
+            case '<': {
+                strncat(lexeme_new, &CHAR_CURRENT, 1);
+                if ('<' == CHAR_NEXT) {
+                    strncat(lexeme_new, &CHAR_NEXT, 1);
+                    TOKEN_TO_ARRAY(T_BWLEFT);
+                    i++;
+                    continue;
+                }
+                else if ('=' == CHAR_NEXT) {
+                    strncat(lexeme_new, &CHAR_NEXT, 1);
+                    TOKEN_TO_ARRAY(T_LESS_T_EQ);
+                    i++;
+                    continue;
+                }
+                else {
+                    TOKEN_TO_ARRAY(T_LESS_T);
+                }
+            }
+            case '>': {
+                strncat(lexeme_new, &CHAR_CURRENT, 1);
+                if ('>' == CHAR_NEXT) {
+                    strncat(lexeme_new, &CHAR_NEXT, 1);
+                    TOKEN_TO_ARRAY(T_BWRIGHT);
+                    i++;
+                    continue;
+                }
+                else if ('=' == CHAR_NEXT) {
+                    strncat(lexeme_new ,&CHAR_NEXT, 1);
+                    TOKEN_TO_ARRAY(T_GREATER_T_EQ);
+                    i++;
+                    continue;
+                }
+                else {
+                    TOKEN_TO_ARRAY(T_GREATER_T);
+                }
+            }
+            case '*': {
+                strncat(lexeme_new, &CHAR_CURRENT, 1);
+                TOKEN_TO_ARRAY(T_TIMES);
                 break;
             }
-        }
-
-        else if (char_current == '+') {
-            strncat(lexeme_new, &char_current, 1);
-            
-            if (char_next == '+') {
-                strncat(lexeme_new, &char_next, 1);
-                token_to_array_from_string(lexeme_new, &t_array, T_INCREMENT);
-                i++;
-                continue;
+            case '/': {
+                strncat(lexeme_new, &CHAR_CURRENT, 1);
+                TOKEN_TO_ARRAY(T_DIVIDE);
+                break;
             }
-            else {            
-                token_to_array_from_string(lexeme_new, &t_array, T_PLUS);
-            } 
-        }
-
-        else if (char_current == '-') {
-            strncat(lexeme_new, &char_current, 1);
-
-            if (char_next == '-') {
-                strncat(lexeme_new, &char_next, 1);
-                token_to_array_from_string(lexeme_new, &t_array, T_DECREMENT);                
-                i++;
-                continue;
+            case '(': {
+                CONSUME_CURRENT;
+                TOKEN_TO_ARRAY(T_LPAREN);
+                break;
             }
-            else {                 
-                token_to_array_from_string(lexeme_new, &t_array, T_MINUS);
+            case ')': {
+                CONSUME_CURRENT;
+                TOKEN_TO_ARRAY(T_RPAREN);
+                break;
             }
-        }
-        else if (char_current == '<') {
-            strncat(lexeme_new, &char_current, 1);
-
-            if (char_next == '<') {
-                strncat(lexeme_new, &char_next, 1);
-                token_to_array_from_string(lexeme_new, &t_array, T_BWLEFT);
-                i++;
-                continue;
+            case '=': {
+                CONSUME_CURRENT;
+                if ('=' == CHAR_NEXT) {
+                    CONSUME_NEXT;
+                    TOKEN_TO_ARRAY(T_EQUIVALENT);
+                    i++;
+                    continue;
+                }
+                else {
+                    TOKEN_TO_ARRAY(T_EQUALS);
+                }
+                break;
             }
-            else if (char_next == '=') {
-                strncat(lexeme_new, &char_next, 1);
-                token_to_array_from_string(lexeme_new, &t_array, T_LESS_T_EQ);
-                i++;
-                continue;
+            case ';': {
+
             }
-            else {
-                token_to_array_from_string(lexeme_new, &t_array, T_LESS_T);
-            }
-        } 
-
-        else if (char_current == '>') {
-            strncat(lexeme_new, &char_current, 1);
-
-            if (char_next == '>') {
-                strncat(lexeme_new, &char_next, 1);
-                token_to_array_from_string(lexeme_new, &t_array, T_BWRIGHT);
-                i++;
-                continue;
-            }
-            else if (char_next == '=') {
-                strncat(lexeme_new, &char_next, 1);
-                token_to_array_from_string(lexeme_new, &t_array, T_GREATER_T_EQ);
-                i++;
-                continue;
-            }
-            else {
-                token_to_array_from_string(lexeme_new, &t_array, T_GREATER_T);
-            }
-        }
-
-        else if (char_current == '*') {
-            strncat(lexeme_new, &char_current, 1);
-            token_to_array_from_string(lexeme_new, &t_array, T_TIMES);
-        }
-
-        else if (char_current == '/') {
-            strncat(lexeme_new, &char_current, 1);
-            token_to_array_from_string(lexeme_new, &t_array, T_DIVIDE);
-        }
-        else if (char_current == '(') {
-            strncat(lexeme_new, &char_current, 1);
-            token_to_array_from_string(lexeme_new, &t_array, T_LPAREN);
-        }
-
-        else if (char_current == ')') {
-            strncat(lexeme_new, &char_current, 1);
-            token_to_array_from_string(lexeme_new, &t_array, T_RPAREN);
-        }
-
-        else if (char_current == '=') {
-            strncat(lexeme_new, &char_current, 1);
-            if (char_next == '=') {
-                strncat(lexeme_new, &char_next, 1);
-                token_to_array_from_string(lexeme_new, &t_array, T_EQUIVALENT);
-                i++;
-                continue;
-            }
-            else {
-                token_to_array_from_string(lexeme_new, &t_array, T_EQUALS);
-            }
-        }
-
-        else if (char_current == ';') {
-            strncat(lexeme_new, &char_current, 1);
-            token_to_array_from_string(lexeme_new, &t_array, T_SEMICOLON);
-        }
-
-        else if (char_current == '%') {
-            strncat(lexeme_new, &char_current, 1);
-            token_to_array_from_string(lexeme_new, &t_array, T_MOD); 
-        }
-
-        else if (char_current == '#') {
-            strncat(lexeme_new, &char_current, 1);
-            token_to_array_from_string(lexeme_new, &t_array, T_POWER);
-        }
-
-        else if (char_current == '^') {
-            strncat(lexeme_new, &char_current, 1);
-            token_to_array_from_string(lexeme_new, &t_array, T_XOR);
-        }
-
-        else if (char_current == '~') {
-            strncat(lexeme_new, &char_current, 1);
-            token_to_array_from_string(lexeme_new, &t_array, T_BWNOT);
-        }
-
-        else if (char_current == '&') {
-            strncat(lexeme_new, &char_current, 1);  
-            
-            if (char_next == '&') {
-                strncat(lexeme_new, &char_next, 1);
-                token_to_array_from_string(lexeme_new, &t_array, T_AND);
-                i++;
-                continue;
-            } 
-            else {
-                token_to_array_from_string(lexeme_new, &t_array, T_BWAND);
-            }
-        }
-
-        else if (char_current == '|') {
-            strncat(lexeme_new, &char_current, 1);
-
-            if (char_next == '|') {
-                strncat(lexeme_new, &char_next, 1);
-                token_to_array_from_string(lexeme_new, &t_array, T_OR);
-                i++;
-                continue;
-            }
-            else {
-                token_to_array_from_string(lexeme_new, &t_array, T_BWOR);
-            }
-        }
-
-        else if (char_current == '!') {
-            strncat(lexeme_new, &char_current, 1);
-
-            if (char_next == '=') {
-                strncat(lexeme_new, &char_next, 1);
-                token_to_array_from_string(lexeme_new, &t_array, T_NOT_EQUIVALENT);
-                i++; 
-                continue;
-            }
-            else {
-                token_to_array_from_string(lexeme_new, &t_array, T_NOT);
-            }
-        }
-
-        else if (char_current == ' ') {
-            column_number++;   
-            continue;
-        }
-        else if (char_current == '\n') {
-            line_number++;
-        }
-    
-        else {
-            printf("Unrecognized character '%c'\n", char_current);
+        
+        default:
             break;
         }
-        column_number++;
     }
-    free(lexeme_new);
-    return t_array;
+
 }
 
 int 
-token_match(size_t position, char *input_string, char *to_match) 
+is_identifier(const char current, const char previous)
 {
-    size_t i;
-    size_t end_to_match = strlen(to_match);
-    for (i = 0; i < end_to_match; i++) {
-    }
-    return 11;
+    if ((isalpha(current) || current == '_') ||
+        (isdigit(current) && (isalpha(previous) || previous == '_')) )
+        return 1;
+    return -1;
 }
+
+int
+is_valid_decimal(const char previous, const char current) { return 0;}
 
