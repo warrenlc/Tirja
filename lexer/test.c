@@ -8,19 +8,21 @@
 int 
 token_array_compare(const char *test_string, char* lexemes_expected[], size_t size_lexemes_expected) 
 {
+    int pass = 1;
+    
     printf("Test string_: %s\n", test_string);
     Token_Array t_array = token_array_get_from_string(test_string);
     //token_array_print(&t_array);
     for (int i = 0; i < t_array.size; i++) {
         if (strncmp(lexemes_expected[i], t_array.tokens[i].lexeme, size_lexemes_expected) != 0) {
             fprintf(stderr, "Fail at: %s", t_array.tokens[i].lexeme);
-            token_array_free(&t_array);
-            return -1;
+            pass = -1;
+            break;
         }
     }
     /* Free t_array now that we are done with it */
     token_array_free(&t_array);
-    return 1;
+    return pass;
 }
 
 void test_tokenize_string_to_array(const char *string_test, char *lexeme_array_expected[], int test_number, char *test_name) 
