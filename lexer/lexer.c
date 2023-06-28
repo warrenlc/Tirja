@@ -122,6 +122,27 @@ token_to_array_from_string(char *lexeme, Token_Array *t_array, Token_Type type)
     free(t);
 }
 
+Token_Type 
+token_type_get_single_char(const char lexeme) 
+{
+    //char value = &lexeme;
+    switch (lexeme) {
+        case '*':   return T_PLUS;
+        case '/':   return T_DIVIDE;
+        case '(':   return T_LPAREN;
+        case ')':   return T_RPAREN;
+        case ';':   return T_SEMICOLON;
+        case '%':   return T_MOD;
+        case '#':   return T_POWER;
+        case '^':   return T_XOR;
+        case '~':   return T_BWNOT;
+    
+    default:
+        break;
+    }
+    return T_NOTHING;
+}
+
 void 
 token_array_print(Token_Array *t_array)
 {
@@ -206,22 +227,22 @@ token_array_get_from_string(const char *string_input)
         }
 
         else if (CHAR_CURRENT == '.') {
-            if (isdigit(CHAR_PREVIOUS) && isdigit(CHAR_NEXT) && char_count('.', lexeme_new) < 1)
-                CONSUME_CURRENT; //strncat(lexeme_new, &CHAR_CURRENT, 1);
-            else {
-                /**
-                 *  Print an error message as to why this does not work. Will replace with a consistent, repeatable function in the future.
-                */
-                char *token_bad = (char *)calloc(MAX_TOKEN_LENGTH + 1, sizeof *lexeme_new);
-                strcpy(token_bad, lexeme_new);
-                strncat(token_bad, &CHAR_CURRENT, 1);
-                printf("*************** ERROR! **************\n"
-                       "Unexpected character '%c' at line: %d, column: %d.\n"
-                       "Cannot make number token from '%s'.\n", 
-                       CHAR_CURRENT, line_number, column_number, token_bad);
-                free(token_bad);
-                break;
+            /**
+             * A valid decimal point is preceeded by a digit, followed by a digit and occurs only once
+             * in a lexeme representing a number. 
+             */
+            
+            int is_valid_decimal = isdigit(CHAR_PREVIOUS) && isdigit(CHAR_NEXT) && (char_count('.', lexeme_new) < 1);
+            
+            CONSUME_CURRENT;  
+            /* Consume it regardless, so we can include the bad decimal (if it is bad) 
+             * in the error message 
+             */
+            if (!is_valid_decimal) { 
+                error_message_print(line_number, column_number, lexeme_new, &CHAR_CURRENT); 
+                break; /* Stop scanning */ 
             }
+        
         }
 
         else if (CHAR_CURRENT == '+') {
@@ -455,214 +476,6 @@ token_word_match(char *lexeme)
     return T_NAME;
 }
 
-void
-token_array_create_from_string(const char *string_input) 
-{
-    #define CHAR_CURRENT  string_input[i]
-    #define CHAR_NEXT     string_input[i + 1]
-    #define CHAR_PREVIOUS string_input[i - 1]
-    #define TOKEN_TO_ARRAY(type) token_to_array_from_string(lexeme_new, &t_array, type);
-
-    int line_number = 1;
-    int column_number = 1;
-    //printf("Test string is: \n%s\n\n", string_input);
-    
-    int length_string_input = (int)strlen(string_input);
-    
-    char *lexeme_new = (char *)calloc(MAX_TOKEN_LENGTH + 1, sizeof *lexeme_new);
-    Token_Array t_array;
-    token_array_init(&t_array);
-
-    for (int i = 0; i < length_string_input; ++i) { 
-        switch (CHAR_CURRENT) {
-            case 'A':
-            case 'B':
-            case 'C':
-            case 'D':
-            case 'E':
-            case 'F':
-            case 'G':
-            case 'H':
-            case 'I':
-            case 'J':
-            case 'K':
-            case 'L':
-            case 'M':
-            case 'N':
-            case 'O':
-            case 'P':
-            case 'Q':
-            case 'R':
-            case 'S':
-            case 'T':
-            case 'U':
-            case 'V':
-            case 'W':
-            case 'X':
-            case 'Y':
-            case 'Z':
-            case 'a':
-            case 'b':
-            case 'c':
-            case 'd':
-            case 'e':
-            case 'f':
-            case 'g':
-            case 'h':
-            case 'i':
-            case 'j':
-            case 'k':
-            case 'l':
-            case 'm':
-            case 'n':
-            case 'o':
-            case 'p':
-            case 'q':
-            case 'r':
-            case 's':
-            case 't':
-            case 'u':
-            case 'v':
-            case 'w':
-            case 'x':
-            case 'y':
-            case 'z':
-            case '_': {  
-                strncat(lexeme_new, &CHAR_CURRENT, 1);
-                if (!isalnum(CHAR_NEXT) && '_' != CHAR_NEXT) {
-                    TOKEN_TO_ARRAY(token_word_match(lexeme_new));
-                }
-                break;
-            }           
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-            case '9': {
-                strncat(lexeme_new, &CHAR_CURRENT, 1);
-                if (!isdigit(CHAR_NEXT) && '.' != CHAR_NEXT) {
-                    TOKEN_TO_ARRAY(T_NUMBER);
-                }
-                break;
-            } 
-            case '.': {
-                if (isdigit(CHAR_PREVIOUS) && isdigit(CHAR_NEXT) && char_count('.', lexeme_new) < 1) {
-                    strncat(lexeme_new, &CHAR_CURRENT, 1);
-                }
-                else {
-                    printf("Invalid decimal point at line %d, column %d\n", line_number, column_number);
-                    break;
-                }
-            }
-            case '+': {
-                strncat(lexeme_new, &CHAR_CURRENT, 1);
-                if ('+' == CHAR_NEXT) {
-                    strncat(lexeme_new, &CHAR_NEXT, 1);
-                    TOKEN_TO_ARRAY(T_INCREMENT);
-                    i++;
-                    continue;
-                }
-                else {
-                    TOKEN_TO_ARRAY(T_PLUS);
-                }
-            }
-            case '-': {
-                strncat(lexeme_new, &CHAR_CURRENT, 1);
-                if ('-' == CHAR_NEXT) {
-                    strncat(lexeme_new, &CHAR_NEXT, 1);
-                    TOKEN_TO_ARRAY(T_DECREMENT);
-                    i++;
-                    continue;
-                }
-                else {
-                    TOKEN_TO_ARRAY(T_MINUS);
-                }
-            }
-            case '<': {
-                strncat(lexeme_new, &CHAR_CURRENT, 1);
-                if ('<' == CHAR_NEXT) {
-                    strncat(lexeme_new, &CHAR_NEXT, 1);
-                    TOKEN_TO_ARRAY(T_BWLEFT);
-                    i++;
-                    continue;
-                }
-                else if ('=' == CHAR_NEXT) {
-                    strncat(lexeme_new, &CHAR_NEXT, 1);
-                    TOKEN_TO_ARRAY(T_LESS_T_EQ);
-                    i++;
-                    continue;
-                }
-                else {
-                    TOKEN_TO_ARRAY(T_LESS_T);
-                }
-            }
-            case '>': {
-                strncat(lexeme_new, &CHAR_CURRENT, 1);
-                if ('>' == CHAR_NEXT) {
-                    strncat(lexeme_new, &CHAR_NEXT, 1);
-                    TOKEN_TO_ARRAY(T_BWRIGHT);
-                    i++;
-                    continue;
-                }
-                else if ('=' == CHAR_NEXT) {
-                    strncat(lexeme_new ,&CHAR_NEXT, 1);
-                    TOKEN_TO_ARRAY(T_GREATER_T_EQ);
-                    i++;
-                    continue;
-                }
-                else {
-                    TOKEN_TO_ARRAY(T_GREATER_T);
-                }
-            }
-            case '*': {
-                strncat(lexeme_new, &CHAR_CURRENT, 1);
-                TOKEN_TO_ARRAY(T_TIMES);
-                break;
-            }
-            case '/': {
-                strncat(lexeme_new, &CHAR_CURRENT, 1);
-                TOKEN_TO_ARRAY(T_DIVIDE);
-                break;
-            }
-            case '(': {
-                CONSUME_CURRENT;
-                TOKEN_TO_ARRAY(T_LPAREN);
-                break;
-            }
-            case ')': {
-                CONSUME_CURRENT;
-                TOKEN_TO_ARRAY(T_RPAREN);
-                break;
-            }
-            case '=': {
-                CONSUME_CURRENT;
-                if ('=' == CHAR_NEXT) {
-                    CONSUME_NEXT;
-                    TOKEN_TO_ARRAY(T_EQUIVALENT);
-                    i++;
-                    continue;
-                }
-                else {
-                    TOKEN_TO_ARRAY(T_EQUALS);
-                }
-                break;
-            }
-            case ';': {
-
-            }
-        
-        default:
-            break;
-        }
-    }
-
-}
-
 int 
 is_identifier(const char current, const char previous)
 {
@@ -672,6 +485,16 @@ is_identifier(const char current, const char previous)
     return -1;
 }
 
-int
-is_valid_decimal(const char previous, const char current) { return 0;}
+void error_message_print(int line_number, int column_number, char *lexeme, const char *current) 
+{
+    printf("*************** ERROR! **************\n"
+        "Unexpected character '%c' at line: %d, column: %d.\n"
+        "Cannot make number token from '%s'.\n", 
+        *current, line_number, column_number, lexeme);
+}
 
+int 
+is_valid_decimal(const char *previous, const char *next, char *lexeme) 
+{
+    return (isdigit(*previous) && isdigit(*next) && (char_count('.', lexeme)) < 1);
+}

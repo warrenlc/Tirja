@@ -45,7 +45,8 @@ typedef enum Token_Type{
     T_FOR,
     T_ELSE,
     T_THEN,
-    T_WHILE
+    T_WHILE,
+    T_NOTHING
 }Token_Type;
 
 /* A Token has a type and a string representation, aka 'lexeme' */
