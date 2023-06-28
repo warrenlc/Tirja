@@ -489,7 +489,7 @@ void error_message_print(int line_number, int column_number, char *lexeme, const
 {
     printf("*************** ERROR! **************\n"
         "Unexpected character '%c' at line: %d, column: %d.\n"
-        "Cannot make number token from '%s'.\n", 
+        "Cannot make token from '%s'.\n", 
         *current, line_number, column_number, lexeme);
 }
 
@@ -497,4 +497,167 @@ int
 is_valid_decimal(const char *previous, const char *next, char *lexeme) 
 {
     return (isdigit(*previous) && isdigit(*next) && (char_count('.', lexeme)) < 1);
+}
+
+Token_Array
+token_array_create_from_string(const char *string_input) 
+{
+    #define CHAR_CURRENT            string_input[i]
+    #define CHAR_NEXT               string_input[i + 1]
+    #define CHAR_PREVIOUS           string_input[i - 1]
+    #define CONSUME_CURRENT         strncat(lexeme_new, &CHAR_CURRENT, 1)
+    #define CONSUME_NEXT            strncat(lexeme_new, &CHAR_NEXT, 1)
+    #define TOKEN_TO_ARRAY(type)    token_to_array_from_string(lexeme_new, &t_array, type);
+
+    /**
+     *  Keep track of where we are in the input string.
+    */
+    int line_number     = 1;
+    int column_number   = 1;
+
+    int length_string_input = (int)strlen(string_input);
+    
+    char *lexeme_new = (char *)calloc(MAX_TOKEN_LENGTH + 1, sizeof *lexeme_new);
+    
+    /**
+     *  Declare and initialize a dynamic array to store found tokens.
+    */
+    Token_Array t_array;
+    token_array_init(&t_array);
+
+    /**
+     *  Begin scanning
+    */
+    for (int i = 0; i < length_string_input; ++i) {  
+        switch (CHAR_CURRENT)
+        {
+        case 'A':
+        case 'B':
+        case 'C':
+        case 'D':
+        case 'E':
+        case 'F':
+        case 'G':
+        case 'H':
+        case 'I':
+        case 'J':
+        case 'K':
+        case 'L':
+        case 'M':
+        case 'N':
+        case 'O':
+        case 'P':
+        case 'Q':
+        case 'R':
+        case 'S':
+        case 'T':
+        case 'U':
+        case 'V':
+        case 'W':
+        case 'X':
+        case 'Y':
+        case 'Z':
+        case 'a':
+        case 'b':
+        case 'c':
+        case 'd':
+        case 'e':
+        case 'f':
+        case 'g':
+        case 'h':
+        case 'i':
+        case 'j':
+        case 'k':
+        case 'l':
+        case 'm':
+        case 'n':
+        case 'o':
+        case 'p':
+        case 'q':
+        case 'r':
+        case 's':
+        case 't':
+        case 'u':
+        case 'v':
+        case 'w':
+        case 'x':
+        case 'y':
+        case 'z':
+        case '_': 
+        case '0':
+        case '1':
+        case '2':
+        case '3':
+        case '4':
+        case '5':
+        case '6':
+        case '7':
+        case '8':
+        case '9': {
+            CONSUME_CURRENT;
+            if (is_identifier(CHAR_CURRENT, CHAR_PREVIOUS) == 1 && !isalnum(CHAR_NEXT) && '_' != CHAR_NEXT) {
+                if (!isalnum(CHAR_NEXT) && CHAR_NEXT != '_') {
+                    TOKEN_TO_ARRAY(token_word_match(lexeme_new));
+                }
+            }
+            else if (isdigit(CHAR_CURRENT) && (!isdigit(CHAR_NEXT) && '.' != '.')) {
+                TOKEN_TO_ARRAY(T_NUMBER);
+            }
+            break;
+        }
+        case '.': {
+            CONSUME_CURRENT;
+            if (!(isdidigt(CHAR_PREVIOUS) && isdigit(CHAR_NEXT) && (char_count('.', lexeme_new) < 1))) {
+                error_message_print(line_number, column_number, lexeme_new, &CHAR_CURRENT);
+                exit;
+            }
+            break;
+        }
+        case '+': {
+            CONSUME_CURRENT;
+            if ('+' == CHAR_NEXT) {
+                CONSUME_NEXT;
+                TOKEN_TO_ARRAY(T_INCREMENT);
+                i++;
+                
+            }
+            else {
+                TOKEN_TO_ARRAY(T_PLUS);
+            }
+            break;
+        }
+        case '-': {
+            CONSUME_CURRENT;
+            if ('-' == CHAR_NEXT) {
+                CONSUME_NEXT;
+                TOKEN_TO_ARRAY(T_DECREMENT);
+                i++;
+            }
+            else {
+                TOKEN_TO_ARRAY(T_MINUS);
+            }
+            break;
+        }
+        case '<': {
+            CONSUME_CURRENT;
+            if ('<' == CHAR_NEXT) {
+                CONSUME_NEXT;
+                TOKEN_TO_ARRAY(T_BWLEFT);
+                i++;
+            }
+            else if ('=' == CHAR_NEXT) {
+                CONSUME_NEXT;
+                TOKEN_TO_ARRAY(T_LESS_T_EQ);
+                i++;
+            }
+            else {
+                TOKEN_TO_ARRAY(T_LESS_T);
+            }
+            break;
+        }
+
+        default:
+            break;
+        }
+    }
 }

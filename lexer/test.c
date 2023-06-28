@@ -11,8 +11,9 @@ token_array_compare(const char *test_string, char* lexemes_expected[], size_t si
     int pass = 1;
     
     printf("Test string_: %s\n", test_string);
+    //Token_Array t_array = token_array_create_from_string(test_string);
     Token_Array t_array = token_array_get_from_string(test_string);
-    // token_array_print(&t_array);
+    token_array_print(&t_array);
     for (int i = 0; i < t_array.size; i++) {
         if (strncmp(lexemes_expected[i], t_array.tokens[i].lexeme, size_lexemes_expected) != 0) {
             fprintf(stderr, "Fail at: %s. Expected: %s\n", t_array.tokens[i].lexeme, lexemes_expected[i]);
@@ -127,7 +128,15 @@ main(void)
      */
     const char *test_true_false      = "k = True; j = False;";
     char *test_true_false_expected[] = { "k", "=", "True", ";", "j", "=", "False", ";" };
-    test_tokenize_string_to_array(test_true_false, test_true_false_expected, 8, "True / False"); 
+    test_tokenize_string_to_array(test_true_false, test_true_false_expected, 8, "True / False");
+
+    /* TEST 9
+     * Testing bad variable names
+     */
+    const char *test_bad_names      = "14days = 14; 21jump_street = 9;";
+    char *test_bad_names_expected[] = { "14", "days", "=", "14", ";", "21", "jump_street", "=", "9", ";"};
+    test_tokenize_string_to_array(test_bad_names, test_bad_names_expected, 10, "Bad names");
+
     printf("\n\n");
     return 0;
 }

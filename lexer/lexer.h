@@ -2,7 +2,6 @@
  *  Lexical Analysis for Tirja
  * */
 
-#include <regex.h>
 
 #include "tokens.h"
 
@@ -29,5 +28,5 @@ Token_Type  token_word_match(char *lexeme);
 int         is_identifier(const char current, const char previous);
 void        error_message_print(int line_number, int column_number, char *lexeme, const char *current);
 int         is_valid_decimal(const char *previous, const char *next, char *lexeme);
-
+Token_Array token_array_create_from_string(const char *string_input);
 #endif /* LEXER_H */
