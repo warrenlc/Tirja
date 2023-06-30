@@ -127,7 +127,7 @@ token_type_get_single_char(const char lexeme)
 {
     //char value = &lexeme;
     switch (lexeme) {
-        case '*':   return T_PLUS;
+        case '*':   return T_TIMES;
         case '/':   return T_DIVIDE;
         case '(':   return T_LPAREN;
         case ')':   return T_RPAREN;
