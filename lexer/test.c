@@ -12,7 +12,7 @@ token_array_compare(const char *test_string, char* lexemes_expected[], size_t si
     
     printf("Test string_: %s\n", test_string);
     Token_Array t_array = token_array_get_from_string(test_string);
-    token_array_print(&t_array);
+    //token_array_print(&t_array);
     for (int i = 0; i < t_array.size; i++) {
         if (strncmp(lexemes_expected[i], t_array.tokens[i].lexeme, size_lexemes_expected) != 0) {
             fprintf(stderr, "Fail at: %s. Expected: %s\n", t_array.tokens[i].lexeme, lexemes_expected[i]);
@@ -36,106 +36,122 @@ void test_tokenize_string_to_array(const char *string_test, char *lexeme_array_e
 }
 
 int 
-main(void) 
+main(int argc, char* argv[]) 
 {
-
-    /* TEST 1 
-     * a string that has an extra decimal point. This should not produce a token.
-     */
-    const char *test_too_many_decimals = "j = 0; j++; result_1 = 66+(55 - 7.9.9) / (Test_Value * 11.71); result_1++; j--; 6 % 3;";
-    char* test_too_many_decimals_expected[] = {
-        "j"         ,  "="  , "0"   ,  ";"  , "j"  , "++"  , ";", 
-        "result_1"  ,  "="  , "66"  ,  "+"  , "("  , "55"  , "-"
-    };
-    test_tokenize_string_to_array(test_too_many_decimals, test_too_many_decimals_expected, 1, "too many decimals");
-
-
-    /* TEST 2 
-     * a valid input string. 
-     */
-    const char *test_valid_decimals = 
-        "j = 0; j++; result_1 = 66+(55 - 7.99) / (Test_Value * 11.71); result_1++; j--; 6 % 3;";
-    char* test_valid_decimals_expected[] = 
-        {
-            "j"  ,  "="  ,  "0"          ,  ";"   ,  "j"      ,  "++" ,  ";"     ,  "result_1" ,  
-            "="  ,  "66" ,  "+"          ,  "("   ,  "55"     ,  "-"  ,  "7.99"  ,  ")"        ,  
-            "/"  ,  "("  ,  "Test_Value" ,  "*"   ,  "11.71"  ,  ")"  ,  ";"     ,  "result_1" ,  
-            "++" ,  ";"  ,  "j"          ,  "--"  ,  ";"      ,  "6"  ,  "%"     ,  "3"        ,  
-            ";"
+    if (argc == 1) {
+        /* TEST 1 
+        * a string that has an extra decimal point. This should not produce a token.
+        */
+        const char *test_too_many_decimals = "j = 0; j++; result_1 = 66+(55 - 7.9.9) / (Test_Value * 11.71); result_1++; j--; 6 % 3;";
+        char* test_too_many_decimals_expected[] = {
+            "j"         ,  "="  , "0"   ,  ";"  , "j"  , "++"  , ";", 
+            "result_1"  ,  "="  , "66"  ,  "+"  , "("  , "55"  , "-"
         };
-    test_tokenize_string_to_array(test_valid_decimals, test_valid_decimals_expected, 2, "valid decimals");
+        test_tokenize_string_to_array(test_too_many_decimals, test_too_many_decimals_expected, 1, "too many decimals");
 
 
-    /* TEST 3
-     * Testing invalid increment operator. This should tokenize but would fail later
-     * during syntactic analysis. We just want to test that tokens are produced as we expect.
-     */
-    const char *test_invalid_increment      = "j = 0; j+++;";
-    char *test_invalid_increment_expected[] = { "j", "=", "0", ";", "j", "++", "+", ";" };
-    test_tokenize_string_to_array(test_invalid_increment, test_invalid_increment_expected, 3, "invalid increment");
+        /* TEST 2 
+        * a valid input string. 
+        */
+        const char *test_valid_decimals = 
+            "j = 0; j++; result_1 = 66+(55 - 7.99) / (Test_Value * 11.71); result_1++; j--; 6 % 3;";
+        char* test_valid_decimals_expected[] = 
+            {
+                "j"  ,  "="  ,  "0"          ,  ";"   ,  "j"      ,  "++" ,  ";"     ,  "result_1" ,  
+                "="  ,  "66" ,  "+"          ,  "("   ,  "55"     ,  "-"  ,  "7.99"  ,  ")"        ,  
+                "/"  ,  "("  ,  "Test_Value" ,  "*"   ,  "11.71"  ,  ")"  ,  ";"     ,  "result_1" ,  
+                "++" ,  ";"  ,  "j"          ,  "--"  ,  ";"      ,  "6"  ,  "%"     ,  "3"        ,  
+                ";"
+            };
+        test_tokenize_string_to_array(test_valid_decimals, test_valid_decimals_expected, 2, "valid decimals");
 
 
-    /* TEST 4
-     * Testing variations of '<' char, including <, <=, <<
-     */
-    const char *test_lt_symbol      = "k=0;k<8;k<=0;k<<;";
-    char *test_lt_symbol_expected[] = 
-        {
-            "k" , "=" , "0" , ";"  , "k"  , 
-            "<" , "8" , ";" , "k"  , "<=" , 
-            "0" , ";" , "k" , "<<" , ";"
-        };
-    test_tokenize_string_to_array(test_lt_symbol, test_lt_symbol_expected, 4, "lt_symbol");
+        /* TEST 3
+        * Testing invalid increment operator. This should tokenize but would fail later
+        * during syntactic analysis. We just want to test that tokens are produced as we expect.
+        */
+        const char *test_invalid_increment      = "j = 0; j+++;";
+        char *test_invalid_increment_expected[] = { "j", "=", "0", ";", "j", "++", "+", ";" };
+        test_tokenize_string_to_array(test_invalid_increment, test_invalid_increment_expected, 3, "invalid increment");
 
 
-    /* TEST 5
-     * Testing variations of '>' char, including >, >=, >>.
-     * Includes invalid syntax.
-     */
-    const char *test_gt_symbol      = "k = 0; k>8; k>=0; k>>;<>;";   
-    char *test_gt_symbol_expected[] = 
-        {
-            "k"  ,  "="  ,  "0"  ,  ";"  ,  "k"  , ">" , 
-            "8"  ,  ";"  ,  "k"  ,  ">=" ,  "0"  , ";" , 
-            "k"  ,  ">>" ,  ";"  ,  "<"  ,  ">"  , ";"
-        };
-    test_tokenize_string_to_array(test_gt_symbol, test_gt_symbol_expected, 5, "gt_symbol");
+        /* TEST 4
+        * Testing variations of '<' char, including <, <=, <<
+        */
+        const char *test_lt_symbol      = "k=0;k<8;k<=0;k<<;";
+        char *test_lt_symbol_expected[] = 
+            {
+                "k" , "=" , "0" , ";"  , "k"  , 
+                "<" , "8" , ";" , "k"  , "<=" , 
+                "0" , ";" , "k" , "<<" , ";"
+            };
+        test_tokenize_string_to_array(test_lt_symbol, test_lt_symbol_expected, 4, "lt_symbol");
 
 
-    /* TEST 6
-     * Testing usage of '!' character
-     */
-    const char *test_not      =   "!k; k != 7;";
-    char *test_not_expected[] = { "!" , "k" , ";" , "k" , "!=" , "7" , ";" };
-    test_tokenize_string_to_array(test_not, test_not_expected, 6, "not operator");
+        /* TEST 5
+        * Testing variations of '>' char, including >, >=, >>.
+        * Includes invalid syntax.
+        */
+        const char *test_gt_symbol      = "k = 0; k>8; k>=0; k>>;<>;";   
+        char *test_gt_symbol_expected[] = 
+            {
+                "k"  ,  "="  ,  "0"  ,  ";"  ,  "k"  , ">" , 
+                "8"  ,  ";"  ,  "k"  ,  ">=" ,  "0"  , ";" , 
+                "k"  ,  ">>" ,  ";"  ,  "<"  ,  ">"  , ";"
+            };
+        test_tokenize_string_to_array(test_gt_symbol, test_gt_symbol_expected, 5, "gt_symbol");
 
 
-    /* TEST 7
-     * Testing and and or : && , ||
-     */
-    const char *test_and_or       = "(k && j) || !(k||(g && !f));";
-    char *test_and_or_exepected[] = 
-        {
-             "(",  "k",  "&&",   "j",  ")",  "||",  
-             "!",  "(",   "k",  "||",  "(",   "g",
-            "&&",  "!",   "f",   ")",  ")",   ";"
-        };
-    test_tokenize_string_to_array(test_and_or, test_and_or_exepected, 7, "and / or");
+        /* TEST 6
+        * Testing usage of '!' character
+        */
+        const char *test_not      =   "!k; k != 7;";
+        char *test_not_expected[] = { "!" , "k" , ";" , "k" , "!=" , "7" , ";" };
+        test_tokenize_string_to_array(test_not, test_not_expected, 6, "not operator");
 
-    /* TEST 8
-     * Testing matching of True and False 
-     */
-    const char *test_true_false      = "k = True; j = False;";
-    char *test_true_false_expected[] = { "k", "=", "True", ";", "j", "=", "False", ";" };
-    test_tokenize_string_to_array(test_true_false, test_true_false_expected, 8, "True / False");
 
-    /* TEST 9
-     * Testing bad variable names
-     */
-    const char *test_bad_names      = "14days = 14; 21jump_street = 9;";
-    char *test_bad_names_expected[] = { "14", "days", "=", "14", ";", "21", "jump_street", "=", "9", ";"};
-    test_tokenize_string_to_array(test_bad_names, test_bad_names_expected, 10, "Bad names");
+        /* TEST 7
+        * Testing and and or : && , ||
+        */
+        const char *test_and_or       = "(k && j) || !(k||(g && !f));";
+        char *test_and_or_exepected[] = 
+            {
+                "(",  "k",  "&&",   "j",  ")",  "||",  
+                "!",  "(",   "k",  "||",  "(",   "g",
+                "&&",  "!",   "f",   ")",  ")",   ";"
+            };
+        test_tokenize_string_to_array(test_and_or, test_and_or_exepected, 7, "and / or");
 
+        /* TEST 8
+        * Testing matching of True and False 
+        */
+        const char *test_true_false      = "k = True; j = False;";
+        char *test_true_false_expected[] = { "k", "=", "True", ";", "j", "=", "False", ";" };
+        test_tokenize_string_to_array(test_true_false, test_true_false_expected, 8, "True / False");
+
+        /* TEST 9
+        * Testing bad variable names
+        */
+        const char *test_bad_names      = "14days = 14; 21jump_street = 9;";
+        char *test_bad_names_expected[] = { "14", "days", "=", "14", ";", "21", "jump_street", "=", "9", ";"};
+        test_tokenize_string_to_array(test_bad_names, test_bad_names_expected, 9, "Bad names");
+
+        /* TEST 10
+        * Testing line number and column number
+        */
+        const char *test_line_column_number      = "j = 9:;\nj=9.9,\nx=10?;";
+        char *test_line_column_number_expected[] = { "j", "=", "9", ";", "j", "=", "9.9", "x", "=", "10", ";" };
+        printf("Expecting 1st error at line 1 col 6.\nExpecting 2nd error at line 2 col 6\nExpecting 3rd error at line 3 col 5\n");
+        test_tokenize_string_to_array(test_line_column_number, test_line_column_number_expected, 10, "test line and column numbers");
+    }
+    else {
+    /* TODO 
+     * Allow to tokenize from stdin
+     */ 
+    }
+  
+
+    /**************************** END TESTS ***************************************/
     printf("\n\n");
     return 0;
 }
