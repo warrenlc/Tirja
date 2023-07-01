@@ -35,7 +35,7 @@ token_array_init(Token_Array *t_array)
 int
 token_array_add(Token_Array *t_array, Token *t)
 {
-    /* Returns 0 or -1 if successful at adding a Token to a Token_Array */
+    /* Returns 1 or -1 if successful at adding a Token to a Token_Array */
 
     /* Check capacity and resize the array */
     if (t_array->size == t_array->capacity)
