@@ -497,11 +497,11 @@ token_array_get_from_string(const char *string_input)
             continue;
         }
 
-        else if (CHAR_CURRENT == ' ') {
+        else if (' ' == CHAR_CURRENT) {
             /* For spaces, simply continue to the next character */
             continue;
         }
-        else if (CHAR_CURRENT == '\n') {
+        else if ('\n' == CHAR_CURRENT) {
             /* Advance the line number and continue */    
             line_number++;
             column_number = 0;
