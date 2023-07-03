@@ -72,6 +72,9 @@ class Tokenizer {
 
         static Tokenizer *get_instance(const std::string &input_string);
 
+        Token get_token(const std::string &);
+        
+
         std::string to_string() const;
 };
 

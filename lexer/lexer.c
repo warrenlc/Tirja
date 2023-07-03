@@ -112,6 +112,14 @@ token_type_to_string(Token_Type type)
         case T_NUMBER:          return "T_NUMBER";
         case T_NAME:            return "T_NAME";
         case T_EQUALS:          return "T_EQUALS";
+        case T_IF:              return "T_IF";
+        case T_DO:              return "T_DO";
+        case T_FOR:             return "T_FOR";
+        case T_ELSE:            return "T_ELSE";
+        case T_THEN:            return "T_THEN";
+        case T_WHILE:           return "T_WHILE";
+        case T_NOTHING:         return "T_NOTHING";
+
         default:
         return "NOTHING";
     }
@@ -251,18 +259,8 @@ token_array_get_from_string(const char *string_input)
         column_number++; 
 
         if (is_identifier(CHAR_CURRENT, CHAR_PREVIOUS) == 1) {
-            CONSUME_CURRENT;
-            /* Check what is ahead and see if we need to make the token yet. */
-            if (!isalnum(CHAR_NEXT) && '_' !=  CHAR_NEXT) {
-                /**
-                 *  If the next character is not alphanumeric or '_' then we have reached the end 
-                 *  of the lexeme and can make a token and add it to the array
-                 *  token_word_match() will return the proper Token_Type based on the value
-                 *  of lexeme_new.
-                */
-                TOKEN_TO_ARRAY(token_word_match(lexeme_new));
-                continue;
-            }
+            i = token_identifier_get(lexeme_new, string_input, i, &t_array);
+            continue;
         }
 
         /* If the character is a digit */
@@ -512,7 +510,7 @@ token_array_get_from_string(const char *string_input)
             /* If the current character is none of these, print a message and advance */
             printf("Unrecognized character '%c' at line: %d , column %d\n", CHAR_CURRENT, line_number, column_number);
         }
-        //column_number++;
+    
     }
 
     free(lexeme_new);
@@ -567,6 +565,30 @@ is_identifier(const char current, const char previous)
         (isdigit(current) && (isalpha(previous) || previous == '_')) )
         return 1;
     return -1;
+}
+
+int 
+is_lexeme_end(const char c)
+{
+    if (!isalnum(c) && '_' != c) {
+        return 1; /* true */
+    }
+    return -1; /* false */
+}
+
+int 
+token_identifier_get(char *lexeme, const char *string_input, int index_current, Token_Array *t_array) 
+{
+    while (1) {
+        strncat(lexeme, &string_input[index_current], 1);
+        if (is_lexeme_end(string_input[index_current + 1]) == 1) {
+            token_to_array_from_string(lexeme, t_array, token_word_match(lexeme));
+            break;
+        }
+        
+        index_current++;
+    }
+    return index_current;
 }
 
 void error_message_print(int line_number, int column_number, char *lexeme, const char *current) 
