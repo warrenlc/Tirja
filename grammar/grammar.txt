@@ -4,7 +4,9 @@
 
 <exp_list>              ::=  <expression> |
                              <exp_list> SEMICOLON <expression>
-<expression>            ::=  <numeric_exp> | <boolean_expression>
+<expression>            ::=  <numeric_exp> | <boolean_expression> | <string_expression> | <conditional_expression> |
+                             <for_all_exp> | <assignment_expression> | VAR_NAME | <function_call>
+
 
 <numeric_exp>           ::=  <numeric_exp> <inc_dec>     |
                              <inc_dec>     <mumeric_exp> |
@@ -19,7 +21,49 @@
                             <boolean_expression> <binary_bool_op> <boolean_expression> |
                             LPAREN <boolean_expression> RPAREN                         |
                             <boolean_atom>                                             |
-                            <variable_name>                                                              
+                            <variable_name>   
+
+<string_expression>     ::= " <character_list> "
+
+<character_list>        ::= STRING |
+                            <character_list> STRING 
+
+<conditional_expression> ::= <if_expression>    |
+                             <while_expression>
+
+
+<if_expression>          ::= IF <boolean_expression> THEN LBRACE <exp_list> RBRACE |
+                             IF <boolean_expression> THEN LBRACE <exp_list> RBRACE ELSE LBRACE <exp_list> RBRACE |
+                             IF <boolean_expression> THEN LBRACE <exp_list> RBRACE ELSE <conditional_expression>                       
+
+<while_expression>       ::= WHILE <boolean_expression> DO LBRACE <exp_list> RBRACE |
+                             DO LBRACE <exp_list> RBRACE WHILE <boolean_expression>
+
+<for_all_exp>           ::= FOR_ALL DUMMY_VAR IN <container> DO LBRACE <exp_list> RBRACE
+
+<container>             ::= LSQUARE RSQUARE |
+                            LSQUARE <atom_list> RSQUARE
+
+<atom_list>             ::= <atom> |
+                            <atom_list> "," <atom>
+
+<atom>                         ::= <number> | <boolean_atom> | <character_list> | <container> | <function>                        
+
+<assignment_expression>    ::= LET VAR_NAME EQUAL <function_assign> SEMICOLON |
+                               LET VAR_NAME EQUAL <variable_assign> SEMICOLON |
+                               LET VAR_NAME EQUAL <block_assign>    SEMICOLON 
+
+<function_assign>       ::= <VAR_NAME> FUNC_DECLARE <arg_list> LBRACE <exp_list> RBRACE
+
+<function_call>         ::= <VAR_NAME> <arg_list>
+
+<variable_assign>       ::= expression
+
+<arg_list>              ::= LPAREN RPAREN |
+                            LPAREN <atom_list> RPAREN
+
+<block_assign>          ::= DOLLAR <exp_list> DOLLAR
+
 
 <inc_dec>               ::=  INCREMENT |
                              DECREMENT
@@ -90,5 +134,17 @@ TRUE                    ::= "True"                      %%
 FALSE                   ::= "False"                     %%
 NUMBER                  ::= \d+\.?\d*                   %%
 VAR_NAME                ::= [a-z\_]+[a-zA-Z\_0-9]*      %%
+STRING                  ::= .*                          %%
+IF                      ::= "if"                        %%
+WHILE                   ::= "while"                     %%
+DO                      ::= "do"                        %%
+THEN                    ::= "then"                      %%
+LBRACE                  ::= \{                          %%
+RBRACE                  ::= \}                          %%
+FUNC_DECLARE            ::= \:{2}                       %%
+DOLLAR                  ::= \$                          %%
+LSQUARE                 ::= \[                          %%
+RSQUARE                 ::= \]                          %%
+
 
 

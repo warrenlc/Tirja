@@ -26,6 +26,11 @@ int         char_at_position(int pos, char c, char *lexeme);
 Token_Array token_array_get_from_string(const char *string_input);
 Token_Type  token_word_match(char *lexeme);
 int         is_identifier(const char current, const char previous);
-void        error_message_print(int line_number, int column_number, char *lexeme, const char *current);
+int         is_identifier_end(const char c);
 int         token_identifier_get(char *lexeme, const char *string_input, int index_current, Token_Array *t_array);
+int         token_string_get(char *lexeme, const char *string_input, int index_current, Token_Array *t_array);
+
+
+
+void        error_message_print(int line_number, int column_number, char *lexeme, const char *current);
 #endif /* LEXER_H */

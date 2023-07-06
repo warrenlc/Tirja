@@ -118,7 +118,15 @@ token_type_to_string(Token_Type type)
         case T_ELSE:            return "T_ELSE";
         case T_THEN:            return "T_THEN";
         case T_WHILE:           return "T_WHILE";
+        case T_STRING:          return "T_STRING";
         case T_NOTHING:         return "T_NOTHING";
+        case T_LBRACE:          return "T_LBRACE";
+        case T_RBRACE:          return "T_RBRACE";
+        case T_FUNC_DEC:        return "T_FUNC_DEC";
+        case T_DOLLAR:          return "T_DOLLAR";
+        case T_LSQUARE:         return "T_LSQUARE";
+        case T_RSQUARE:         return "T_RSQUARE";
+        case T_LET:             return "T_LET";
 
         default:
         return "NOTHING";
@@ -284,6 +292,7 @@ token_array_get_from_string(const char *string_input)
              */
             if (!is_valid_decimal) { 
                 error_message_print(line_number, column_number, lexeme_new, &CHAR_CURRENT); 
+                memset(lexeme_new, '\0', MAX_TOKEN_LENGTH);
                 break; /* Stop scanning */ 
             }
             continue;
@@ -399,6 +408,45 @@ token_array_get_from_string(const char *string_input)
             continue;
         }
 
+        else if ('{' == CHAR_CURRENT) {
+            CONSUME_CURRENT;
+            TOKEN_TO_ARRAY(T_LBRACE);
+            continue;
+        }
+
+        else if ('}' == CHAR_CURRENT) {
+            CONSUME_CURRENT;
+            TOKEN_TO_ARRAY(T_RBRACE);
+            continue;
+        }
+
+        else if (':' == CHAR_CURRENT) {
+            if (':' == CHAR_NEXT) {
+                CONSUME_CURRENT;
+                CONSUME_NEXT;
+                TOKEN_TO_ARRAY(T_FUNC_DEC);
+            }
+            continue;
+        }
+
+        else if ('$' == CHAR_CURRENT) {
+            CONSUME_CURRENT;
+            TOKEN_TO_ARRAY(T_DOLLAR);
+            continue;
+        }
+
+        else if ('[' == CHAR_CURRENT) {
+            CONSUME_CURRENT;
+            TOKEN_TO_ARRAY(T_LSQUARE);
+            continue;
+        }
+
+        else if (']' == CHAR_CURRENT) {
+            CONSUME_CURRENT;
+            TOKEN_TO_ARRAY(T_RSQUARE);
+            continue;
+        }
+
         else if ('=' == CHAR_CURRENT) {
             CONSUME_CURRENT;
             /* If the next char is also '=' then we have the logical '==' operator */
@@ -495,6 +543,11 @@ token_array_get_from_string(const char *string_input)
             continue;
         }
 
+        else if ('"' == CHAR_CURRENT) {
+            i = token_string_get(lexeme_new, string_input, i, &t_array) + 1;
+            continue;
+        }
+
         else if (' ' == CHAR_CURRENT) {
             /* For spaces, simply continue to the next character */
             continue;
@@ -537,6 +590,8 @@ token_word_match(char *lexeme)
         case 3:
             if (strncmp (lexeme, "for", 3) == 0)
                 return T_FOR;
+            if (strncmp (lexeme, "let", 3) == 0)
+                return T_LET;
             break;
         case 4:
             if (strncmp(lexeme, "else", 4) == 0)
@@ -568,9 +623,10 @@ is_identifier(const char current, const char previous)
 }
 
 int 
-is_lexeme_end(const char c)
+is_identifier_end(const char c)
 {
-    if (!isalnum(c) && '_' != c) {
+    if (!isalnum(c) && '_' != c) 
+    {
         return 1; /* true */
     }
     return -1; /* false */
@@ -579,13 +635,30 @@ is_lexeme_end(const char c)
 int 
 token_identifier_get(char *lexeme, const char *string_input, int index_current, Token_Array *t_array) 
 {
-    while (1) {
+    while (1) 
+    {
         strncat(lexeme, &string_input[index_current], 1);
-        if (is_lexeme_end(string_input[index_current + 1]) == 1) {
+        if (is_identifier_end(string_input[index_current + 1]) == 1) 
+        {
             token_to_array_from_string(lexeme, t_array, token_word_match(lexeme));
             break;
         }
-        
+        index_current++;
+    }
+    return index_current;
+}
+
+int
+token_string_get(char *lexeme, const char *string_input, int index_current, Token_Array *t_array)
+{
+    while (1)
+    {
+        strncat(lexeme, &string_input[index_current], 1);
+        if ('"' == string_input[index_current + 1]) {
+            strncat(lexeme, &string_input[index_current + 1], 1);
+            token_to_array_from_string(lexeme, t_array, T_STRING);
+            break;
+        }
         index_current++;
     }
     return index_current;
@@ -598,4 +671,3 @@ void error_message_print(int line_number, int column_number, char *lexeme, const
         "Cannot make token from '%s'.\n", 
         *current, line_number, column_number, lexeme);
 }
-

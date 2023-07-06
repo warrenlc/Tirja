@@ -11,25 +11,28 @@ token_array_compare(const char *test_string, Token tokens_expected[]) //, size_t
     int pass = 1;
     
     printf("Test string_: %s\n", test_string);
+    fflush(stdout);
     Token_Array t_array = token_array_get_from_string(test_string);
-    
+    token_array_print(&t_array); 
     for (int i = 0; i < t_array.size; i++) {
         size_t size_to_compare_token_type = strlen(token_type_to_string(t_array.tokens[i].type));
         size_t size_to_compare_lexeme     = strlen(t_array.tokens[i].lexeme);
         
-        // printf("expected type / lexeme: %s / %s vs. actual type / lexeme: %s / %s\n", token_type_to_string(tokens_expected[i].type), tokens_expected[i].lexeme, 
-        //     token_type_to_string(t_array.tokens[i].type), t_array.tokens[i].lexeme);
+        printf("expected type / lexeme: %s / %s vs. actual type / lexeme: %s / %s\n", token_type_to_string(tokens_expected[i].type), tokens_expected[i].lexeme, 
+            token_type_to_string(t_array.tokens[i].type), t_array.tokens[i].lexeme);
         
-        if ((strncmp(tokens_expected[i].lexeme, t_array.tokens[i].lexeme, size_to_compare_lexeme) != 0) &&
+        if ((strncmp(tokens_expected[i].lexeme, t_array.tokens[i].lexeme, size_to_compare_lexeme) != 0) ||
             (strncmp(token_type_to_string(t_array.tokens[i].type), token_type_to_string(tokens_expected[i].type), size_to_compare_token_type) != 0)) 
         {
-            fprintf(stderr, "Fail at: %s. Expected: %s\n", t_array.tokens[i].lexeme, tokens_expected[i].lexeme);
+            fprintf(stdout, "Fail at: %s. Expected: %s\n", t_array.tokens[i].lexeme, tokens_expected[i].lexeme);
             pass = -1;
             break;
         }
     }
     /* Free t_array now that we are done with it */
     token_array_free(&t_array);
+
+    fflush(stdout);
     return pass;
 }
 
@@ -60,7 +63,7 @@ main(int argc, char* argv[])
 
     /**************************************************************************************************  
     TEST 1 
-        Testing a string that has an extra decimal point. This should not produce a token.
+        Testing a string that has an extra decimal point. This should not produce a token at 7.9.9 .
     */
     const char *test_too_many_decimals = 
         "j = 0; j++; result_1 = 66+(55 - 7.9.9) / (Test_Value * 11.71); result_1++; j--; 6 % 3;";
@@ -245,6 +248,128 @@ main(int argc, char* argv[])
     /*
     ***************************************************************************************************/  
 
+
+    /**************************************************************************************************/
+    /* TEST 12
+        Testing string recognition
+    */
+    const char *test_string_recognition      = "greeting = \"hello, Bob!\";";
+    Token test_string_recognition_expected[] = 
+    { 
+        {T_NAME, "greeting"}, {T_EQUALS, "="}, {T_STRING, "\"hello, Bob!\""}, {T_SEMICOLON, ";"}
+    };
+    test_tokenize_string_to_array(test_string_recognition, test_string_recognition_expected, 12, "test string recognition"); 
+    /*
+    ***************************************************************************************************/  
+
+
+    /**************************************************************************************************/
+    /* TEST 13
+        Testing numbers and strings.  
+    */
+    const char *test_numbers_and_strings      = "j = 9; name = \"joseph\"; joseph = name + 9;";
+    Token test_numbers_and_strings_expected[] = 
+    { 
+        {T_NAME,   "j"     },  {T_EQUALS,    "="},  {T_NUMBER, "9"         },  {T_SEMICOLON, ";"},  
+        {T_NAME,   "name"  },  {T_EQUALS,    "="},  {T_STRING, "\"joseph\""},  {T_SEMICOLON, ";"},  
+        {T_NAME,   "joseph"},  {T_EQUALS,    "="},  {T_NAME,   "name"      },  {T_PLUS,      "+"}, 
+        {T_NUMBER, "9"     },  {T_SEMICOLON, ";"} 
+    };
+
+    test_tokenize_string_to_array(test_numbers_and_strings, test_numbers_and_strings_expected, 13, "test numbers and strings"); 
+    /*
+    ***************************************************************************************************/  
+
+    
+    /**************************************************************************************************/
+    /* TEST 14
+        Testing { and }
+    */
+    const char *test_lbrace_rbrace      = "dl{sdlfkjsdlkj}sdfkjsldkfj;";
+    Token test_lbrace_rbrace_expected[] = 
+    { 
+        {T_NAME,   "dl"},  {T_LBRACE, "{"          },  {T_NAME,      "sdlfkjsdlkj"},  
+        {T_RBRACE, "}" },  {T_NAME,   "sdfkjsldkfj"},  {T_SEMICOLON, ";"          }  
+    };
+
+    test_tokenize_string_to_array(test_lbrace_rbrace, test_lbrace_rbrace_expected, 14, "test lbrace and rbrace"); 
+    /*
+    ***************************************************************************************************/ 
+
+
+    /**************************************************************************************************/
+    /* TEST 15
+        Testing :: 
+    */
+    const char *test_double_colon      = "dl::sdlfkjsdlkj::sdfkjsldkfj;::";
+    Token test_double_colon_expected[] = 
+    { 
+        {T_NAME,     "dl"},  {T_FUNC_DEC, "::"         },  {T_NAME,      "sdlfkjsdlkj"},  
+        {T_FUNC_DEC, "::"},  {T_NAME,     "sdfkjsldkfj"},  {T_SEMICOLON, ";"          }, 
+        {T_FUNC_DEC, "::"}
+    };
+
+    test_tokenize_string_to_array(test_double_colon, test_double_colon_expected, 15, "test double colon"); 
+    /*
+    ***************************************************************************************************/ 
+
+
+    /**************************************************************************************************/
+    /* TEST 16
+        Testing $ 
+    */
+    const char *test_dollar      = "dl$sdlfkjsdlkj$sdfkjsldkfj;$";
+    Token test_dollar_expected[] = 
+    { 
+        {T_NAME,   "dl"},  {T_DOLLAR, "$"          },  {T_NAME,      "sdlfkjsdlkj"},  
+        {T_DOLLAR, "$" },  {T_NAME,   "sdfkjsldkfj"},  {T_SEMICOLON, ";"          }, 
+        {T_DOLLAR, "$" }
+    };
+
+    test_tokenize_string_to_array(test_dollar, test_dollar_expected, 16, "test dollar"); 
+    /*
+    ***************************************************************************************************/     
+
+    
+    /**************************************************************************************************/
+    /* TEST 17
+        Testing [ and ] 
+    */
+    const char *test_lsqure_rsquqre       = "dl[sdlfkjsdlkj]sdfkjsldkfj;[";
+    Token test_lsquare_rsquare_expected[] = 
+    { 
+        {T_NAME,    "dl"},  {T_LSQUARE, "["          },  {T_NAME,      "sdlfkjsdlkj"},  
+        {T_RSQUARE, "]" },  {T_NAME,    "sdfkjsldkfj"},  {T_SEMICOLON, ";"          }, 
+        {T_LSQUARE, "[" }
+    };
+
+    test_tokenize_string_to_array(test_lsqure_rsquqre, test_lsquare_rsquare_expected, 17, "test lsquare and rsquare"); 
+    /*
+    ***************************************************************************************************/   
+
+    
+    /**************************************************************************************************/
+    /* TEST 18
+        Testing potential valid program 
+    */
+    const char *test_valid_program      = "let i = 0; let f(x) = f::(x){x#3;}; let k = $while(i < 0) do {f(i); i++}$;";
+
+    Token test_valid_program_expected[] =
+    { 
+        {T_LET,       "let"},  {T_NAME,      "i" },  {T_EQUALS,    "="    },  {T_NUMBER, "0"  },  {T_SEMICOLON, ";"}, 
+        {T_LET,       "let"},  {T_NAME,      "f" },  {T_LPAREN,    "("    },  {T_NAME,   "x"  },  {T_RPAREN,    ")"}, 
+        {T_EQUALS,    "="  },  {T_NAME,      "f" },  {T_FUNC_DEC,  "::"   },  {T_LPAREN, "("  },  {T_NAME,      "x"}, 
+        {T_RPAREN,    ")"  },  {T_LBRACE,    "{" },  {T_NAME,      "x"    },  {T_POWER,  "#"  },  {T_NUMBER,    "3"}, 
+        {T_SEMICOLON, ";"  },  {T_RBRACE,    "}" },  {T_SEMICOLON, ";"    },  {T_LET,    "let"},  {T_NAME,      "k"}, 
+        {T_EQUALS,    "="  },  {T_DOLLAR,    "$" },  {T_WHILE,     "while"},  {T_LPAREN, "("  },  {T_NAME,      "i"}, 
+        {T_LESS_T,    "<"  },  {T_NUMBER,    "0" },  {T_RPAREN,    ")"    },  {T_DO,     "do" },  {T_LBRACE,    "{"}, 
+        {T_NAME,      "f"  },  {T_LPAREN,    "(" },  {T_NAME,      "i"    },  {T_RPAREN, ")"  },  {T_SEMICOLON, ";"}, 
+        {T_NAME,      "i"  },  {T_INCREMENT, "++"},  {T_RBRACE,    "}"    },  {T_DOLLAR, "$"  },  {T_SEMICOLON, ";"}
+    };
+
+    test_tokenize_string_to_array(test_valid_program, test_valid_program_expected, 18, "test valid program"); 
+    /*
+    ***************************************************************************************************/ 
 
 
     /**************************** END TESTS ***************************************/

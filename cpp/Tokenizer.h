@@ -1,61 +1,11 @@
 //
 // Created by Warren Crutcher on 2023-06-10.
 //
-#include<string>
+#include <string>
+#include "Token.h"
+
 #ifndef TIRJA_TOKENIZER_H
 #define TIRJA_TOKENIZER_H
-
-enum class Token_Type {
-    SEMICOLON,
-    LPAREN,
-    RPAREN,
-    INCREMENT,
-    DECREMENT,
-    MINUS,
-    BWNOT,
-    POWER,
-    TIMES,
-    DIVIDE,
-    MOD,
-    PLUS,
-    BWLEFT,
-    BWRIGHT,
-    BWAND,
-    XOR,
-    NOT,
-    AND,
-    OR,
-    LESS_THAN,
-    GREATER_THAN,
-    EQUIVALENT,
-    NOT_EQUIVALENT,
-    LESS_THAN_EQ,
-    GREATER_THAN_EQ,
-    TRUE,
-    FALSE,
-    NUMBER,
-    NAME,
-    EQUALS,
-    IF,
-    DO,
-    FOR,
-    ELSE,
-    THEN,
-    WHILE,
-    NOTHING
-};
-
-class Token {
-    public:
-        Token(std::string lexeme, Token_Type type)
-        : lexeme{lexeme}
-        , type{type} {}
-    
-    protected:
-        std::string lexeme;
-        Token_Type  type;
-};
-
 
 class Tokenizer {
     protected:

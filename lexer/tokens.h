@@ -46,6 +46,14 @@ typedef enum Token_Type{
     T_ELSE,
     T_THEN,
     T_WHILE,
+    T_STRING,
+    T_LBRACE,
+    T_RBRACE,
+    T_FUNC_DEC,
+    T_DOLLAR,
+    T_LSQUARE,
+    T_RSQUARE,
+    T_LET,
     T_NOTHING
 }Token_Type;
 
