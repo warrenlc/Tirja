@@ -3,7 +3,7 @@
 //
 #include <string>
 #include <memory>
-#include <queue>
+#include <vector>
 
 #include "Token.h"
 
@@ -12,23 +12,23 @@
 
 class Tokenizer {
     private:
-        Tokenizer(std::string string_input)
-        : string_input{string_input} {}
+        Tokenizer() {}
 
         static std::shared_ptr<Tokenizer> tokenizer;
 
-        const std::string string_input;
-        std::queue<Token> found_tokens;
+        std::string string_input;
+        std::vector<Token> found_tokens;
     
     public:
         Tokenizer(Tokenizer &other_tokenizer) = delete;
         void operator=(const Tokenizer &)     = delete;
 
-        static std::shared_ptr<Tokenizer> get_instance(const std::string &input_string);
+        static std::shared_ptr<Tokenizer> get_instance();
+        void init(const std::string &s);
 
         Token get_token(const std::string &);
         void add_token(Token &t);
-        std::string to_string() const;
+        void print_tokens()const;
 };
 
 

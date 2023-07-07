@@ -53,12 +53,11 @@ std::string type_to_string(Type type);
 
 
 class Token {
-
-        Token(std::string lexeme, Type type)
-        : lexeme{lexeme}
-        , type{type}{}
-    
     public:
+        Token(std::string lexeme, Type type)
+        : type(type)
+        , lexeme{lexeme} {}
+    
         std::string to_string()const;
 
     private:

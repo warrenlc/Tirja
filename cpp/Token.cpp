@@ -57,6 +57,6 @@ string type_to_string(Type type) {
 
 string Token::to_string()const {
     ostringstream oss;
-    oss << type_to_string(type) << ", " << lexeme << endl;
+    oss << "Token: { " << type_to_string(type) << ", " << lexeme <<" }" ;
     return oss.str();
 }
