@@ -1,6 +1,6 @@
 ** NOTE: rules in ALL CAPS are tokens
 
-<program>               ::=  <exp_list>
+<program>               ::=  <exp_list> SEMICOLON
 
 <exp_list>              ::=  <expression> |
                              <exp_list> SEMICOLON <expression>
@@ -8,13 +8,15 @@
                              <for_all_exp> | <assignment_expression> | VAR_NAME | <function_call> | <array_expression>
 
 
-<numeric_exp>           ::=  <numeric_exp> <inc_dec>     |
+<numeric_exp>           ::=  <value> <inc_dec>     |
                              <inc_dec>     <mumeric_exp> |
                              <unary_op>    <numeric_exp> |
                              <numeric_exp> <binary_op> <numeric_exp> | 
                              LPAREN <numeric_exp> RPAREN             |
                              <number>                                |
                              <variable_name>
+
+<value>                 ::=  <number> | <variable_name>                             
 
 <boolean_expression>    ::= NOT <boolean_expression>                                   |
                             <numeric_expression> <relational_op>  <numeric_expression> |

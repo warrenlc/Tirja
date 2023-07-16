@@ -2,7 +2,7 @@
  *  Lexical Analysis for Tirja
  * */
 
-
+#include <stdlib.h>
 #include "tokens.h"
 
 #ifndef LEXER_H
