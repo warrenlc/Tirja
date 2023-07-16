@@ -49,11 +49,13 @@ typedef enum Token_Type{
     T_STRING,
     T_LBRACE,
     T_RBRACE,
-    T_FUNC_DEC,
     T_DOLLAR,
     T_LSQUARE,
     T_RSQUARE,
+    T_COMMA,
     T_LET,
+    T_FUNC,
+    T_PRINT,
     T_NOTHING
 }Token_Type;
 

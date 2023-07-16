@@ -5,7 +5,7 @@
 <exp_list>              ::=  <expression> |
                              <exp_list> SEMICOLON <expression>
 <expression>            ::=  <numeric_exp> | <boolean_expression> | <string_expression> | <conditional_expression> |
-                             <for_all_exp> | <assignment_expression> | VAR_NAME | <function_call>
+                             <for_all_exp> | <assignment_expression> | VAR_NAME | <function_call> | <array_expression>
 
 
 <numeric_exp>           ::=  <numeric_exp> <inc_dec>     |
@@ -49,15 +49,18 @@
 
 <atom>                         ::= <number> | <boolean_atom> | <character_list> | <container> | <function>                        
 
-<assignment_expression>    ::= LET VAR_NAME EQUAL <function_assign> SEMICOLON |
-                               LET VAR_NAME EQUAL <variable_assign> SEMICOLON |
-                               LET VAR_NAME EQUAL <block_assign>    SEMICOLON 
+<assignment_expression>    ::= LET FUNC_IDENTIFIER <function_assign> SEMICOLON  | /* let func f(x) = {x + 9;} */
+                               LET VAR_NAME EQUAL <variable_assign>  SEMICOLON |
+                               LET VAR_NAME EQUAL <array_expression> SEMICOLON 
 
-<function_assign>       ::= <VAR_NAME> FUNC_DECLARE <arg_list> LBRACE <exp_list> RBRACE
+<function_assign>       ::= VAR_NAME <arg_list>  EQUALS LBRACE <exp_list> RBRACE
 
 <function_call>         ::= <VAR_NAME> <arg_list>
 
-<variable_assign>       ::= expression
+<variable_assign>       ::= <expression>
+
+<array_expression>      ::= LSQUARE RSQUARE |
+                            LSQUARE <atom_list> RSQUARE
 
 <arg_list>              ::= LPAREN RPAREN |
                             LPAREN <atom_list> RPAREN
@@ -141,7 +144,6 @@ DO                      ::= "do"                        %%
 THEN                    ::= "then"                      %%
 LBRACE                  ::= \{                          %%
 RBRACE                  ::= \}                          %%
-FUNC_DECLARE            ::= \:{2}                       %%
 DOLLAR                  ::= \$                          %%
 LSQUARE                 ::= \[                          %%
 RSQUARE                 ::= \]                          %%
