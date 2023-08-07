@@ -13,8 +13,8 @@
 class Tokenizer {
     private:
         Tokenizer() {}
-
-        static std::shared_ptr<Tokenizer> tokenizer;
+        static Tokenizer tokenizer;
+        // static std::unique_ptr<Tokenizer> tokenizer;
 
         std::string string_input;
         std::vector<Token> found_tokens;
@@ -23,7 +23,9 @@ class Tokenizer {
         Tokenizer(Tokenizer &other_tokenizer) = delete;
         void operator=(const Tokenizer &)     = delete;
 
-        static std::shared_ptr<Tokenizer> get_instance();
+        static Tokenizer& get_instance();
+        // static std::unique_ptr<Tokenizer> get_instance();
+        // static std::shared_ptr<Tokenizer> get_instance();
         void init(const std::string &s);
 
         Token get_token(const std::string &);
