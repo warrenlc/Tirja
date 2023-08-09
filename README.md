@@ -5,4 +5,7 @@ I am still unsure if I will use C or C++ or even something else.
 
 This will take a while...
 
-Tirja is pronounced TEER-YAH and was my best friend (border collie) 
+Tirja is pronounced TEER-YAH and was my best friend (border collie)
+
+9-8-23 :
+    So far only a tokenizer I am working on is available in the directory ./lexer/
