@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -pedantic -g
+CFLAGS = -Wall -pedantic -g 
 STD = -std=c99
 
 lex: test.c lexer.c

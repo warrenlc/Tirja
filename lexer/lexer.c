@@ -491,154 +491,148 @@ token_array_get_from_string(const char *string_input)
             continue;
         }
 
-        else if (is_valid_single_character(CHAR_CURRENT) == 1)
+        else if ('*' == CHAR_CURRENT) 
         {
             strncat(lexeme_new, &string_input[i], 1);
-            TOKEN_TO_ARRAY(token_type_get_single_char(string_input[i]));
+            TOKEN_TO_ARRAY(T_TIMES);
             continue;
         }
-        // else if ('*' == CHAR_CURRENT) 
-        // {
-        //     strncat(lexeme_new, &string_input[i], 1);
-        //     TOKEN_TO_ARRAY(T_TIMES);
-        //     continue;
-        // }
-        
-        // else if ('/' == CHAR_CURRENT) 
-        // {
-        //     strncat(lexeme_new, &string_input[i], 1);
-        //     TOKEN_TO_ARRAY(T_DIVIDE);
-        //     continue;
-        // }
-
-        // else if ('(' == CHAR_CURRENT) 
-        // {
-        //     strncat(lexeme_new, &string_input[i], 1);
-        //     TOKEN_TO_ARRAY(T_LPAREN);
-        //     continue;
-        // }
-
-        // else if (')' == CHAR_CURRENT) 
-        // {
-        //     strncat(lexeme_new, &string_input[i], 1);
-        //     TOKEN_TO_ARRAY(T_RPAREN);
-        //     continue;
-        // }
-
-        // else if ('{' == CHAR_CURRENT) 
-        // {
-        //     strncat(lexeme_new, &string_input[i], 1);
-        //     TOKEN_TO_ARRAY(T_LBRACE);
-        //     continue;
-        // }
-
-        // else if ('}' == CHAR_CURRENT) 
-        // {
-        //     strncat(lexeme_new, &string_input[i], 1);
-        //     TOKEN_TO_ARRAY(T_RBRACE);
-        //     continue;
-        // }
-
-        // else if ('$' == CHAR_CURRENT) 
-        // {
-        //     strncat(lexeme_new, &string_input[i], 1);
-        //     TOKEN_TO_ARRAY(T_DOLLAR);
-        //     continue;
-        // }
-
-        // else if ('[' == CHAR_CURRENT) 
-        // {
-        //     strncat(lexeme_new, &string_input[i], 1);
-        //     TOKEN_TO_ARRAY(T_LSQUARE);
-        //     continue;
-        // }
-
-        // else if (']' == CHAR_CURRENT) 
-        // {
-        //     strncat(lexeme_new, &string_input[i], 1);
-        //     TOKEN_TO_ARRAY(T_RSQUARE);
-        //     continue;
-        // }
-
-        // else if (';' == CHAR_CURRENT) 
-        // {
-        //     strncat(lexeme_new, &string_input[i], 1);
-        //     TOKEN_TO_ARRAY(T_SEMICOLON);
-        //     continue;
-        // }
-
-        // else if ('%' == CHAR_CURRENT) 
-        // {
-        //     strncat(lexeme_new, &string_input[i], 1);
-        //     TOKEN_TO_ARRAY(T_MOD);
-        //     continue;
-        // }
-
-        // else if ('#' == CHAR_CURRENT) 
-        // {
-        //     strncat(lexeme_new, &string_input[i], 1);
-        //     TOKEN_TO_ARRAY(T_POWER);
-        //     continue;
-        // }
-
-        // else if ('^' == CHAR_CURRENT) 
-        // {
-        //     strncat(lexeme_new, &string_input[i], 1);
-        //     TOKEN_TO_ARRAY(T_XOR);
-        //     continue;
-        // }
-
-        // else if ('~' == CHAR_CURRENT) 
-        // {
-        //     strncat(lexeme_new, &string_input[i], 1);
-        //     TOKEN_TO_ARRAY(T_BWNOT);
-        //     continue;
-        // }
-
-        // else if (',' == CHAR_CURRENT)
-        // {
-        //     strncat(lexeme_new, &string_input[i], 1);
-        //     TOKEN_TO_ARRAY(T_COMMA);
-        //     continue;
-        // }
-
-        else if ('"' == CHAR_CURRENT) 
+       
+        else if ('/' == CHAR_CURRENT) 
         {
-            i = token_string_get(&lexeme_new, string_input, i, &t_array) + 1;
-         //   column_number += (abs(column_number - i));
+            strncat(lexeme_new, &string_input[i], 1);
+            TOKEN_TO_ARRAY(T_DIVIDE);
             continue;
         }
 
-        else if (' ' == CHAR_CURRENT) 
+        else if ('(' == CHAR_CURRENT) 
         {
-            /* For spaces, simply continue to the next character */
+            strncat(lexeme_new, &string_input[i], 1);
+            TOKEN_TO_ARRAY(T_LPAREN);
             continue;
         }
-        else if ('\n' == CHAR_CURRENT) 
-        {
-            /* Advance the line number and continue */    
-            line_number++;
-            column_number = 0;
-            continue;
-        }
-    
-        else 
-        {
-            /* If the current character is none of these, print a message and break */
-            printf("Unrecognized character '%c' at line: %d , column %d\n", CHAR_CURRENT, line_number, column_number);
-            break;
-        }
-    
-    }
 
-    free(lexeme_new);
+        else if (')' == CHAR_CURRENT) 
+        {
+            strncat(lexeme_new, &string_input[i], 1);
+            TOKEN_TO_ARRAY(T_RPAREN);
+            continue;
+        }
+
+        else if ('{' == CHAR_CURRENT) 
+        {
+            strncat(lexeme_new, &string_input[i], 1);
+            TOKEN_TO_ARRAY(T_LBRACE);
+            continue;
+        }
+
+        else if ('}' == CHAR_CURRENT) 
+        {
+            strncat(lexeme_new, &string_input[i], 1);
+            TOKEN_TO_ARRAY(T_RBRACE);
+            continue;
+        }
+
+        else if ('$' == CHAR_CURRENT) 
+        {
+            strncat(lexeme_new, &string_input[i], 1);
+            TOKEN_TO_ARRAY(T_DOLLAR);
+            continue;
+        }
+
+        else if ('[' == CHAR_CURRENT) 
+        {
+            strncat(lexeme_new, &string_input[i], 1);
+            TOKEN_TO_ARRAY(T_LSQUARE);
+            continue;
+        }
+
+        else if (']' == CHAR_CURRENT) 
+        {
+            strncat(lexeme_new, &string_input[i], 1);
+            TOKEN_TO_ARRAY(T_RSQUARE);
+            continue;
+        }
+
+        else if (';' == CHAR_CURRENT) 
+        {
+            strncat(lexeme_new, &string_input[i], 1);
+            TOKEN_TO_ARRAY(T_SEMICOLON);
+            continue;
+        }
+
+        else if ('%' == CHAR_CURRENT) 
+        {
+            strncat(lexeme_new, &string_input[i], 1);
+            TOKEN_TO_ARRAY(T_MOD);
+            continue;
+        }
+
+        else if ('#' == CHAR_CURRENT) 
+        {
+            strncat(lexeme_new, &string_input[i], 1);
+            TOKEN_TO_ARRAY(T_POWER);
+            continue;
+        }
+
+        else if ('^' == CHAR_CURRENT) 
+        {
+            strncat(lexeme_new, &string_input[i], 1);
+            TOKEN_TO_ARRAY(T_XOR);
+            continue;
+        }
+
+        else if ('~' == CHAR_CURRENT) 
+        {
+            strncat(lexeme_new, &string_input[i], 1);
+            TOKEN_TO_ARRAY(T_BWNOT);
+            continue;
+        }
+
+        else if (',' == CHAR_CURRENT)
+        {
+            strncat(lexeme_new, &string_input[i], 1);
+            TOKEN_TO_ARRAY(T_COMMA);
+            continue;
+        }
+
+       else if ('"' == CHAR_CURRENT) 
+       {
+           i = token_string_get(&lexeme_new, string_input, i, &t_array) + 1;
+        //   column_number += (abs(column_number - i));
+           continue;
+       }
+
+       else if (' ' == CHAR_CURRENT) 
+       {
+           /* For spaces, simply continue to the next character */
+           continue;
+       }
+       else if ('\n' == CHAR_CURRENT) 
+       {
+           /* Advance the line number and continue */    
+           line_number++;
+           column_number = 0;
+           continue;
+       }
+   
+       else 
+       {
+           /* If the current character is none of these, print a message and break */
+           printf("Unrecognized character '%c' at line: %d , column %d\n", CHAR_CURRENT, line_number, column_number);
+           break;
+       }
+   
+   }
+
+   free(lexeme_new);
     
-    #undef CHAR_CURRENT    
-    #undef CHAR_PREVIOUS
-    #undef CHAR_NEXT
-    #undef TOKEN_TO_ARRAY
+   #undef CHAR_CURRENT    
+   #undef CHAR_PREVIOUS
+   #undef CHAR_NEXT
+   #undef TOKEN_TO_ARRAY
     
-    return t_array;
+  return t_array;
 }
 
 Token_Type 
