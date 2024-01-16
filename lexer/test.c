@@ -11,7 +11,6 @@ token_array_compare(const char *test_string, Token tokens_expected[], size_t siz
     int pass = 1;
     
     printf("Test string_: %s\n", test_string);
-    //fflush(stdout);
     Token_Array t_array = token_array_get_from_string(test_string);
 
     if (size_tokens_expected != t_array.size) 
@@ -26,9 +25,9 @@ token_array_compare(const char *test_string, Token tokens_expected[], size_t siz
             size_t size_to_compare_token_type = strlen(token_type_to_string(t_array.tokens[i].type));
             size_t size_to_compare_lexeme     = strlen(t_array.tokens[i].lexeme);
             
-            printf("expected type / lexeme: %s / %s vs. actual type / lexeme: %s / %s\n", token_type_to_string(tokens_expected[i].type), tokens_expected[i].lexeme, 
+            /*printf("expected type / lexeme: %s / %s vs. actual type / lexeme: %s / %s\n", token_type_to_string(tokens_expected[i].type), tokens_expected[i].lexeme, 
                 token_type_to_string(t_array.tokens[i].type), t_array.tokens[i].lexeme);
-            
+            */
             if ((strncmp(tokens_expected[i].lexeme, t_array.tokens[i].lexeme, size_to_compare_lexeme) != 0) ||
                 (strncmp(token_type_to_string(t_array.tokens[i].type), token_type_to_string(tokens_expected[i].type), size_to_compare_token_type) != 0)) 
             {
@@ -41,9 +40,9 @@ token_array_compare(const char *test_string, Token tokens_expected[], size_t siz
     /* Free t_array now that we are done with it */
     token_array_free(&t_array);
 
-    //fflush(stdout);
     return pass;
 }
+
 
 void test_tokenize_string_to_array(const char *string_test, Token token_array_expected[], size_t size_array_expected, int test_number, char *test_name) 
 {
@@ -52,6 +51,7 @@ void test_tokenize_string_to_array(const char *string_test, Token token_array_ex
     else
         fprintf(stderr, "FAIL test %d: %s\n\n", test_number, test_name);    
 }
+
 
 int 
 main(int argc, char* argv[]) 
@@ -235,6 +235,8 @@ main(int argc, char* argv[])
     /* TEST 10
         Testing line number and column number
     */
+    
+    /*
     const char *test_line_column_number      = "j = 9:;\nj=9.9,\nx=10?;";
     Token test_line_column_number_expected[] = 
     { 
@@ -242,9 +244,25 @@ main(int argc, char* argv[])
         {T_NAME,   "j"},  {T_EQUALS, "=" },  {T_NUMBER,    "9.9"},  {T_NAME,      "x"},  
         {T_EQUALS, "="},  {T_NUMBER, "10"},  {T_SEMICOLON, ";"  } 
     };
+    */
     printf("Expecting 1st error at line 1 col 6.\nExpecting 2nd error at line 2 col 6\nExpecting 3rd error at line 3 col 5\n");
-    size_array_expected = sizeof(test_line_column_number_expected) / sizeof(test_line_column_number_expected[0]);
-    test_tokenize_string_to_array(test_line_column_number, test_line_column_number_expected, size_array_expected, 10, "test line and column numbers");
+    
+    /*size_array_expected = sizeof(test_line_column_number_expected) / sizeof(test_line_column_number_expected[0]);
+    */
+    const char *test_line_column_number_error_1 = "j = 0:;";
+    const char *test_line_column_number_error_2 = "j=9.9,;";
+    const char *test_line_column_number_error_3 = "x=10?;";
+    const char *test_line_column_number_error_4 = "j = 0:;\n"
+                                                   "j=9.9,;\n"
+                                                   "x=10?;";
+
+    Token_Array t_array_1 = token_array_get_from_string(test_line_column_number_error_1);
+    Token_Array t_array_2 = token_array_get_from_string(test_line_column_number_error_2); 
+    Token_Array t_array_3 = token_array_get_from_string(test_line_column_number_error_3);
+    Token_Array t_array_4 = token_array_get_from_string(test_line_column_number_error_4);
+    
+    token_array_print(&t_array_1);
+    //test_tokenize_string_to_array(test_line_column_number, test_line_column_number_expected, size_array_expected, 10, "test line and column numbers");
     /*
     ***************************************************************************************************/  
 

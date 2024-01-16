@@ -68,7 +68,6 @@ token_array_free(Token_Array* t_array)
      */
     for (int i = 0; i < t_array->size; i++) {
         /* free the memory made with malloc/strcpy for the lexeme during token_create */
-        printf("freeing: %s\n", t_array->tokens[i].lexeme);
         free((t_array)->tokens[i].lexeme);
     }
     printf("freeing tokens\n");
