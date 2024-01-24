@@ -274,6 +274,10 @@ token_array_get_from_string(const char *string_input)
      *  Begin scanning
      */
     for (int i = 0; i < length_string_input; ++i) { 
+        /*
+         * TODO: Rework to a switch - case and damned be the length of the function!
+         * */
+
         column_number++;
         if (is_identifier(CHAR_CURRENT, CHAR_PREVIOUS) == 1) 
         {
@@ -618,7 +622,7 @@ token_array_get_from_string(const char *string_input)
        else 
        {
            /* If the current character is none of these, print a message and break */
-           printf("Unrecognized character '%c' at line: %d , column %d\n", CHAR_CURRENT, line_number, column_number);
+           printf("From Tokenization of the string: Unrecognized character '%c' at line: %d , column %d\n", CHAR_CURRENT, line_number, column_number);
            break;
        }
    

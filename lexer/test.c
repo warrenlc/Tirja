@@ -252,9 +252,7 @@ main(int argc, char* argv[])
     const char *test_line_column_number_error_1 = "j = 0:;";
     const char *test_line_column_number_error_2 = "j=9.9,;";
     const char *test_line_column_number_error_3 = "x=10?;";
-    const char *test_line_column_number_error_4 = "j = 0:;\n"
-                                                   "j=9.9,;\n"
-                                                   "x=10?;";
+    const char *test_line_column_number_error_4 = "j = 0:;\nj=9.9,;\nx=10?;";
 
     Token_Array t_array_1 = token_array_get_from_string(test_line_column_number_error_1);
     Token_Array t_array_2 = token_array_get_from_string(test_line_column_number_error_2); 
@@ -262,6 +260,9 @@ main(int argc, char* argv[])
     Token_Array t_array_4 = token_array_get_from_string(test_line_column_number_error_4);
     
     token_array_print(&t_array_1);
+    token_array_print(&t_array_2);
+    token_array_print(&t_array_3);
+    token_array_print(&t_array_4);
     //test_tokenize_string_to_array(test_line_column_number, test_line_column_number_expected, size_array_expected, 10, "test line and column numbers");
     /*
     ***************************************************************************************************/  
