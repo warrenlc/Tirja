@@ -726,7 +726,10 @@ token_word_match(char *lexeme)
 
 int 
 is_identifier(const char current, const char previous)
-{
+{   
+    /***
+     * a >= 65 && a <= 90 || a >= 97 && a <= 122
+    */
     if ((isalpha(current) || current == '_') ||
         (isdigit(current) && (isalpha(previous) || previous == '_')) )
         return 1;
