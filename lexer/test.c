@@ -570,5 +570,10 @@ main(int argc, char* argv[])
     ***************************************************************************************************/ 
    
     printf("\n\n");
+
+
+    const char *mystring = "This is a test string\n";
+    Token_Array g = tokenize(mystring);
+
     return 0;
 }

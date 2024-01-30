@@ -236,6 +236,45 @@ char_at_position(int pos, char c, char *lexeme)
 }
 
 Token_Array
+tokenize(const char *string_input) 
+{
+    unsigned line_number = 0;
+    unsigned column_mumber = 0;
+
+    size_t length_string_input = strlen(string_input);
+    Token_Array t_array;
+
+    token_array_init(&t_array);
+
+    char *lexeme_new = (char *)calloc(MAX_TOKEN_LENGTH + 1, sizeof *lexeme_new);
+    if (lexeme_new == NULL) {
+        fprintf(stderr, "Could not allocate for lexeme_new\n");
+        exit(1);
+    }
+
+    putchar(*string_input);
+    printf("\n");
+
+
+    /*
+    
+        Consider doing an implementation that just compares the value of ASCII characters
+
+    */
+    while (*string_input) {
+        
+        printf("%d -> %c\n\n", *string_input, *string_input);
+    
+        *string_input++;
+    
+    }
+
+    return t_array;
+
+
+}
+
+Token_Array
 token_array_get_from_string(const char *string_input) 
 {
     /**
@@ -618,13 +657,14 @@ token_array_get_from_string(const char *string_input)
            column_number = 0;
            continue;
        }
-   
+      
        else 
        {
            /* If the current character is none of these, print a message and break */
            printf("From Tokenization of the string: Unrecognized character '%c' at line: %d , column %d\n", CHAR_CURRENT, line_number, column_number);
            break;
        }
+
    
    }
 
@@ -637,6 +677,10 @@ token_array_get_from_string(const char *string_input)
     
   return t_array;
 }
+
+
+
+
 
 Token_Type 
 token_word_match(char *lexeme) 
