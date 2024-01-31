@@ -568,12 +568,10 @@ main(int argc, char* argv[])
     test_tokenize_string_to_array(test_array_recognition, test_array_recognition_expected, size_array_expected, 21, "test array recognition"); 
     /*
     ***************************************************************************************************/ 
-   
-    printf("\n\n");
-
-
-    const char *mystring = "This is a test string\n";
-    Token_Array g = tokenize(mystring);
+    const char *s = "This is  + a +  string++\n";
+    printf("%s\n", s);
+    Token_Array t = tokenize_string(s);
+    token_array_print(&t);   
 
     return 0;
 }

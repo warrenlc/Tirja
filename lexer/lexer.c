@@ -235,49 +235,65 @@ char_at_position(int pos, char c, char *lexeme)
         return -1;
 }
 
+
 Token_Array
-tokenize(const char *string_input) 
+tokenize_string(const char *s)
 {
-    unsigned line_number = 0;
-    unsigned column_mumber = 0;
+    int line_number     = 1;
+    int column_number   = 0;
 
-    size_t length_string_input = strlen(string_input);
+    int length_string_input = (int)strlen(s);
+
+    /**
+     *  Declare and initialize a dynamic array to store found tokens.
+     */
     Token_Array t_array;
-
     token_array_init(&t_array);
 
+    /* Allocate memory (and initialize to '\0') a new string to represent the lexeme of a token */    
     char *lexeme_new = (char *)calloc(MAX_TOKEN_LENGTH + 1, sizeof *lexeme_new);
     if (lexeme_new == NULL) {
         fprintf(stderr, "Could not allocate for lexeme_new\n");
         exit(1);
     }
 
-    char buffer[MAX_TOKEN_LENGTH] = {'\0'};
-    
-    char c = *string_input;
-    while (*string_input) {
-        // If the stack is empty
-        if (buffer[0] == '\0')
+    while (*s != '\0')
+    {
+        switch (*s)
         {
-            // push
-            buffer[0] = c;
+            /**
+             * 0 - 9 
+             */
+            case 48: case 49: case 50: case 51: case 52: case 53:
+            case 54: case 55: case 56: case 57:
+                break;
+            /* '+' */
+            case 43:
+                strncat(lexeme_new, s, 1);
+                if (s=='+')
+                {
+                    printf("%c", *s++);
+                    strncat (lexeme_new, s, 1);
+                    token_to_array_from_string(lexeme_new, &t_array, T_INCREMENT);
+                    break;
+                } 
+                else 
+                {
+
+                    token_to_array_from_string(lexeme_new, &t_array, T_PLUS);
+                    break;
+                }
+            default: break;
         }
-        if (*string_input == 0x20) 
-        {
-            printf("SPACE");
-        }
-        else 
-        {
-            putchar(*string_input);
-        }
-        //printf("%d -> %c\n\n", *string_input, *string_input);
-        *string_input++;
+        
+        
+        putchar(*s);
+        s++;
     }
 
     return t_array;
-
-
 }
+
 
 Token_Array
 token_array_get_from_string(const char *string_input) 
