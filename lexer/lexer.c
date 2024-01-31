@@ -232,7 +232,7 @@ char_at_position(int pos, char c, char *lexeme)
     if (lexeme[pos] == c) {
         return 1; /* True */
     }
-    return -1;
+        return -1;
 }
 
 Token_Array
@@ -252,21 +252,26 @@ tokenize(const char *string_input)
         exit(1);
     }
 
-    putchar(*string_input);
-    printf("\n");
-
-
-    /*
+    char buffer[MAX_TOKEN_LENGTH] = {'\0'};
     
-        Consider doing an implementation that just compares the value of ASCII characters
-
-    */
+    char c = *string_input;
     while (*string_input) {
-        
-        printf("%d -> %c\n\n", *string_input, *string_input);
-    
+        // If the stack is empty
+        if (buffer[0] == '\0')
+        {
+            // push
+            buffer[0] = c;
+        }
+        if (*string_input == 0x20) 
+        {
+            printf("SPACE");
+        }
+        else 
+        {
+            putchar(*string_input);
+        }
+        //printf("%d -> %c\n\n", *string_input, *string_input);
         *string_input++;
-    
     }
 
     return t_array;
@@ -727,9 +732,8 @@ token_word_match(char *lexeme)
 int 
 is_identifier(const char current, const char previous)
 {   
-    /***
-     * a >= 65 && a <= 90 || a >= 97 && a <= 122
-    */
+
+
     if ((isalpha(current) || current == '_') ||
         (isdigit(current) && (isalpha(previous) || previous == '_')) )
         return 1;
