@@ -140,6 +140,7 @@ FALSE                   ::= "False"                     %%
 NUMBER                  ::= \d+\.?\d*                   %%
 VAR_NAME                ::= [a-z\_]+[a-zA-Z\_0-9]*      %%
 STRING                  ::= .*                          %%
+LET                     ::= "let"                       %%
 IF                      ::= "if"                        %%
 WHILE                   ::= "while"                     %%
 DO                      ::= "do"                        %%

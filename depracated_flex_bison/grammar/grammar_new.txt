@@ -1,0 +1,195 @@
+<program> ::= <exp_list>
+
+<exp_list> ::= <expression> | <expression> SEMICOLON <exp_list>
+
+<expression> ::= <numeric_exp> 
+               | <boolean_exp> 
+             /*  | <string_exp>  */
+               | <conditional_exp> 
+               | <function_def> 
+               | <procedure_block> 
+               | <function_call> 
+               | <lambda_function>
+               | <array_exp>
+               | <assignment_exp>
+               | VAR_NAME
+
+<numeric_exp> ::= <value> <arithmetic_op> <numeric_exp> 
+                | LPAREN <numeric_exp> RPAREN 
+                | <value>
+
+<value> ::= INT | REAL | VAR_NAME
+
+<arithmetic_op> ::= PLUS | MINUS | TIMES | DIV | MOD | BWLEFT | BWRIGHT | BWAND | BWOR | XOR
+
+<boolean_exp> ::= NOT <boolean_exp> 
+                | LPAREN <boolean_exp> RPAREN 
+                | <boolean_exp> <boolean_op> <boolean_exp> 
+                | <numeric_exp> <relational_op> <numeric_exp> 
+                | BOOLEAN
+
+<boolean_op> ::= AND | OR
+
+<relational_op> ::= LESS_T | GREATER_T | EQUIVALENT | LESS_T_EQ | GREATER_T_EQ | NOT_EQUIVALENT
+
+/**
+<string_exp> ::= QUOTE <character_list> QUOTE
+
+<character_list> ::= CHAR | <character_list> CHAR
+**/
+
+<conditional_exp> ::= IF <boolean_exp> THEN LBRACE <exp_list> RBRACE 
+                    | IF <boolean_exp> THEN LBRACE <exp_list> RBRACE ELSE <conditional_exp>
+
+
+<function_def> ::= FUNC_IDENTIFIER ':' <type> <typed_arg_list> EQUALS LBRACE <exp_list> RBRACE
+
+
+<typed_arg_list> ::= LPAREN RPAREN 
+                   | LPAREN <typed_arg> (COMMA <typed_arg>)* RPAREN
+
+<typed_arg> ::= VAR_NAME ':' <type>
+
+<type> ::= INT_TYPE | REAL_TYPE | BOOL_TYPE | ARRAY_INT_TYPE | ARRAY_REAL_TYPE | FUNC_TYPE
+
+<procedure_block> ::= PROCEDURE LBRACE <exp_list> RBRACE
+
+<function_call> ::= FUNC_IDENTIFIER LPAREN <arg_list> RPAREN
+
+<arg_list> ::= <expression> | <expression> COMMA <arg_list>
+
+<lambda_function> ::= LAMBDA LPAREN <typed_arg_list> RPAREN ARROW <expression>
+
+<array_exp> ::= LSQUARE RSQUARE 
+              | LSQUARE <array_values> RSQUARE
+
+<array_values> ::= <expression> | <expression> COMMA <array_values>
+
+<assignment_exp> ::= LET <typed_arg> ASSIGN <expression>
+                    | LET MUT <typed_arg> ASSIGN <expression>
+---
+
+### **Tokens**
+
+```plaintext
+ASSIGN ::= ":="
+SEMICOLON ::= ";"
+PLUS ::= "+"
+MINUS ::= "-"
+TIMES ::= "*"
+DIV ::= "/"
+MOD ::= "%"
+BWLEFT ::= "<<"
+BWRIGHT ::= ">>"
+BWAND ::= "&"
+BWOR ::= "|"
+XOR ::= "^"
+NOT ::= "!"
+AND ::= "&&"
+OR ::= "||"
+LESS_T ::= "<"
+GREATER_T ::= ">"
+EQUIVALENT ::= "=="
+LESS_T_EQ ::= "<="
+GREATER_T_EQ ::= ">="
+NOT_EQUIVALENT ::= "!="
+QUOTE ::= '"'
+CHAR ::= any character except QUOTE
+BOOLEAN ::= "True" | "False"
+INT ::= integer literal
+REAL ::= real number literal
+VAR_NAME ::= name (letters, numbers, underscores, starting with a letter)
+INT_TYPE ::= "int"
+REAL_TYPE ::= "real"
+BOOL_TYPE ::= "bool"
+FUNCTION :: = "func"
+COLON ::= ":"
+EQUAL ::= "="
+ARROW ::= "->"
+LAMBDA ::= "\"
+PROCEDURE ::= "proc"
+LET ::= "let"
+IF ::= "if"
+MUT ::= "mutable"
+THEN ::= "then"
+ELSE ::= "else"
+LBRACE ::= "{"
+RBRACE ::= "}"
+LPAREN ::= "("
+RPAREN ::= ")"
+LSQUARE ::= "["
+RSQUARE ::= "]"
+
+** Functions
+
+<function_def> ::= FUNC_IDENTIFIER COLON <type> <typed_arg_list> EQUALS <function_clauses>
+
+<function_clauses> ::= <function_clause> | <function_clause> <function_clauses>
+
+<function_clause> ::= <pattern> EQUALS <exp_list>
+
+<pattern> ::= VAR_NAME | LITERAL | LPAREN <pattern> COMMA <pattern> RPAREN
+
+
+example: 
+
+func add_two_numbers(x: int, y: int) = {
+    x + y
+};
+
+func square(x: int) = {
+    x * x
+};
+
+proc {
+    let result = add_two_numbers(3, 5);
+    let squared_result = square(result);
+    if squared_result > 50 then {
+        let message = "Result is greater than 50";
+    } else {
+        let message = "Result is less than or equal to 50";
+    }
+};
+
+let array_example = [1, 2, 3, 4, 5];
+
+let double_array = lambda(arr: array<int>) -> array<int> {
+    [x * 2 | x <- arr]
+};
+
+let doubled = double_array(array_example);
+
+/*************************************************************************************************************************/
+
+<program> ::= <exp_list>
+<exp_list> ::= <expression> <exp_list_tail>
+<exp_list_tail> ::= SEMICOLON <exp_list> | ε
+<expression> ::= <numeric_exp> | <boolean_exp> | <conditional_exp> | <function_def> | <procedure_block> | <function_call> | <lambda_function> | <array_exp> | <assignment_exp> | VAR_NAME
+<numeric_exp> ::= <unary_numeric_op> <term> <numeric_exp_tail>
+<numeric_exp_tail> ::= <arithmetic_op> <numeric_exp> | ε
+<term> ::= LPAREN <numeric_exp> RPAREN | <value>
+<value> ::= INT | REAL | VAR_NAME
+<unary_numeric_op> ::= MINUS | ε
+<arithmetic_op> ::= PLUS | MINUS | TIMES | DIV | MOD | BWLEFT | BWRIGHT | BWAND | BWOR | XOR
+<boolean_exp> ::= <unary_boolean_op> <boolean_term> <boolean_exp_tail>
+<boolean_exp_tail> ::= <boolean_op> <boolean_exp> | ε
+<boolean_term> ::= LPAREN <boolean_exp> RPAREN | <numeric_exp> <relational_op> <numeric_exp> | BOOLEAN
+<unary_boolean_op> ::= NOT | ε
+<boolean_op> ::= AND | OR
+<relational_op> ::= LESS_T | GREATER_T | EQUIVALENT | LESS_T_EQ | GREATER_T_EQ | NOT_EQUIVALENT
+<conditional_exp> ::= IF <boolean_exp> THEN LBRACE <exp_list> RBRACE <conditional_exp_tail>
+<conditional_exp_tail> ::= ELSE <conditional_exp> | ε
+<function_def> ::= FUNC_IDENTIFIER COLON <type> <typed_arg_list> EQUAL LBRACE <exp_list> RBRACE
+<typed_arg_list> ::= LPAREN RPAREN | LPAREN <typed_arg> <typed_arg_tail> RPAREN
+<typed_arg_tail> ::= COMMA <typed_arg> <typed_arg_tail> | ε
+<typed_arg> ::= VAR_NAME COLON <type>
+<type> ::= INT_TYPE | REAL_TYPE | BOOL_TYPE | ARRAY_INT_TYPE | ARRAY_REAL_TYPE | FUNC_TYPE
+<procedure_block> ::= PROCEDURE LBRACE <exp_list> RBRACE
+<function_call> ::= FUNC_IDENTIFIER LPAREN <arg_list> RPAREN
+<arg_list> ::= <expression> <arg_list_tail>
+<arg_list_tail> ::= COMMA <expression> <arg_list_tail> | ε
+<lambda_function> ::= LAMBDA LPAREN <typed_arg_list> RPAREN ARROW <expression>
+<array_exp> ::= LSQUARE <array_values> RSQUARE | LSQUARE RSQUARE
+<array_values> ::= <expression> <array_values_tail>
+<array_values_tail> ::= COMMA <expression> <array_values_tail> | ε
+<assignment_exp> ::= LET <typed_arg> EQUAL <expression>
