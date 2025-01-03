@@ -11,32 +11,6 @@
 #define KEYWORD_COUNT 12
 const unsigned short MAX_TOKEN_LENGTH = 1024;
 
-/** ScannerError  */
-
-typedef struct 
-{
-    const char *message;
-    char state;
-    char errorCharacter;
-} ScannerError;
-
-static void scanner_error_init(ScannerError *error, 
-                               const char *message, 
-                               char errorCharacter, 
-                               unsigned char state) 
-{
-    error->message = NULL;
-    error->errorCharacter = 0;
-}
-
-static void scanner_error_print(ScannerError *error) 
-{
-// TODO 
-
-}
-
-/** END Scanner error */
-
 /** Tokens */
 typedef enum
 {
@@ -183,20 +157,18 @@ typedef struct
 {
     TokenType type;
     char *lexeme;
-    //double value;
 } Token;
 
-static void token_init(Token *token, TokenType type, char *lexeme, double value) 
+static void token_init(Token *token, TokenType type, char *lexeme) 
 {
     token->type = type;
     token->lexeme = lexeme;
-    //token->value = value;
 }
 
-static Token token_create(TokenType type, char *lexeme, double value) 
+static Token token_create(TokenType type, char *lexeme) 
 {
     Token token;
-    token_init(&token, type, lexeme, value);
+    token_init(&token, type, lexeme);
     return token;
 }
 
@@ -264,14 +236,13 @@ static void scanner_accumulate(Scanner *scanner, char c)
     }
 }
 
-static Token scanner_scan(Scanner *scanner) //, char c)
+static Token scanner_scan(Scanner *scanner)
 {
     scanner_reset(scanner);
     int c;
     while(1)
     {
         c = scanner_get_char(scanner);
-        //printf("State: %d, Char: %c (%d)\n", scanner->state, c, c);
 
         switch (scanner->state)
         {
@@ -288,26 +259,26 @@ static Token scanner_scan(Scanner *scanner) //, char c)
             }
             else switch (c)
             {
-            case -1   : return token_create(TOKEN_END, NULL, 0);
-            case ';'  : return token_create(TOKEN_SEMICOLON, NULL, 0);
+            case -1   : return token_create(TOKEN_END, NULL);
+            case ';'  : return token_create(TOKEN_SEMICOLON, NULL);
             case ' '  :
             case ','  : 
             case '\t' :
             case '\r' : break;
-            case '\n' : return token_create(TOKEN_ENDOFLINE, NULL, 0);
-            case '*'  : return token_create(TOKEN_TIMES, NULL, 0);
-            case '/'  : scanner->state = 11; break; //return token_create(TOKEN_DIV, NULL, 0);
-            case '%'  : return token_create(TOKEN_MOD, NULL, 0);
-            case '+'  : return token_create(TOKEN_PLUS, NULL, 0);
-            case '-'  : scanner->state = 15; break; //return token_create(TOKEN_MINUS, NULL, 0);
-            case '!'  : scanner->state = 10; break; //return token_create(NOT, NULL, 0);
-            case '^'  : return token_create(TOKEN_XOR, NULL, 0);
-            case '('  : return token_create(TOKEN_LPAREN, NULL, 0);
-            case ')'  : return token_create(TOKEN_RPAREN, NULL, 0);
-            case '{'  : return token_create(TOKEN_LBRACE, NULL, 0);
-            case '}'  : return token_create(TOKEN_RBRACE, NULL, 0);
-            case '['  : return token_create(TOKEN_LBRACKET, NULL, 0);
-            case ']'  : return token_create(TOKEN_RBRACKET, NULL, 0);
+            case '\n' : return token_create(TOKEN_ENDOFLINE, NULL);
+            case '*'  : return token_create(TOKEN_TIMES, NULL);
+            case '/'  : scanner->state = 11; break; 
+            case '%'  : return token_create(TOKEN_MOD, NULL);
+            case '+'  : return token_create(TOKEN_PLUS, NULL);
+            case '-'  : scanner->state = 15; break; 
+            case '!'  : scanner->state = 10; break; 
+            case '^'  : return token_create(TOKEN_XOR, NULL);
+            case '('  : return token_create(TOKEN_LPAREN, NULL);
+            case ')'  : return token_create(TOKEN_RPAREN, NULL);
+            case '{'  : return token_create(TOKEN_LBRACE, NULL);
+            case '}'  : return token_create(TOKEN_RBRACE, NULL);
+            case '['  : return token_create(TOKEN_LBRACKET, NULL);
+            case ']'  : return token_create(TOKEN_RBRACKET, NULL);
             case '<'  : scanner->state = 3; break;
             case '>'  : scanner->state = 4; break;
             case '&'  : scanner->state = 5; break;
@@ -315,7 +286,7 @@ static Token scanner_scan(Scanner *scanner) //, char c)
             case '='  : scanner->state = 8; break; 
             case ':'  : scanner->state = 9; break;
             default: fprintf(stderr, "Unrecognized character: %c\n", c);
-                return token_create(TOKEN_ERROR, NULL, 0);
+                return token_create(TOKEN_ERROR, NULL);
             }
             break;
 
@@ -333,7 +304,7 @@ static Token scanner_scan(Scanner *scanner) //, char c)
             else
             {
                 scanner_unget_char(scanner, c);
-                return token_create(TOKEN_INT, scanner->valueBuffer, atoi(scanner->valueBuffer));
+                return token_create(TOKEN_INT, scanner->valueBuffer);
             }
             break;
         
@@ -347,56 +318,56 @@ static Token scanner_scan(Scanner *scanner) //, char c)
             else
             {
                 scanner_unget_char(scanner, c);
-                return token_create(TOKEN_REAL, scanner->valueBuffer, atof(scanner->valueBuffer));
+                return token_create(TOKEN_REAL, scanner->valueBuffer);
             }
             break;
         
         case 3: // '<' consumed
             if (c == '=') 
-                return token_create(TOKEN_LESS_T_EQ, NULL, 0);
+                return token_create(TOKEN_LESS_T_EQ, NULL);
             else if (c == '<') 
-                return token_create(TOKEN_BWLEFT, NULL, 0);
+                return token_create(TOKEN_BWLEFT, NULL);
             else
             {
                 scanner_unget_char(scanner, c);
-                return token_create(TOKEN_LESS_T, NULL, 0);
+                return token_create(TOKEN_LESS_T, NULL);
             }
             //break;
 
         case 4: // '>' consumed
             if (c == '=') 
-                return token_create(TOKEN_GREATER_T_EQ, NULL, 0);
+                return token_create(TOKEN_GREATER_T_EQ, NULL);
             else if (c == '>') 
-                return token_create(TOKEN_BWRIGHT, NULL, 0);
+                return token_create(TOKEN_BWRIGHT, NULL);
             else
             {
                 scanner_unget_char(scanner, c);
-                return token_create(TOKEN_GREATER_T, NULL, 0);
+                return token_create(TOKEN_GREATER_T, NULL);
             }
             //break;
 
         case 5: // '&' consumed
             if (c == '&') 
-                return token_create(TOKEN_AND, NULL, 0);
+                return token_create(TOKEN_AND, NULL);
             else
             {
                 scanner_unget_char(scanner, c);
-                return token_create(TOKEN_BWAND, NULL, 0);
+                return token_create(TOKEN_BWAND, NULL);
             }
             //break;
 
         case 6: // '|' consumed
             if (c == '|') 
-                return token_create(TOKEN_OR, NULL, 0);
+                return token_create(TOKEN_OR, NULL);
             else
             {
                 scanner_unget_char(scanner, c);
-                return token_create(TOKEN_BWOR, NULL, 0);
+                return token_create(TOKEN_BWOR, NULL);
             }
             //break;
 
         case 7: // Identifier
-            if (isalnum(c))
+            if (isalnum(c) || c == '_')
             {
                 scanner_accumulate(scanner, c);
                 scanner->state = 7;
@@ -406,36 +377,36 @@ static Token scanner_scan(Scanner *scanner) //, char c)
                 scanner_unget_char(scanner, c);
                 int keywordIndex = is_keyword(scanner->valueBuffer);
                 if (-1 == keywordIndex)
-                    return token_create(TOKEN_ID, scanner->valueBuffer, 0);
+                    return token_create(TOKEN_ID, scanner->valueBuffer);
                 else
-                    return token_create((TokenType)keywordIndex, NULL, 0);
+                    return token_create((TokenType)keywordIndex, NULL);
             }
             break;
 
         case 8: // '=' consumed
             if (c == '=')
-                return token_create(TOKEN_EQUIVALENT, NULL, 0);
+                return token_create(TOKEN_EQUIVALENT, NULL);
             else
             {
                 scanner_unget_char(scanner, c);
-                return token_create(TOKEN_EQUAL, NULL, 0);
+                return token_create(TOKEN_EQUAL, NULL);
             }
 
         case 9: // ':' consumed
             if (c == '=')
-                return token_create(TOKEN_ASSIGN, NULL, 0);
+                return token_create(TOKEN_ASSIGN, NULL);
             else
             {
                 scanner_unget_char(scanner, c);
-                return token_create(TOKEN_COLON, NULL, 0);
+                return token_create(TOKEN_COLON, NULL);
             }
         case 10: // '!' consumed
             if (c == '=')
-                return token_create(TOKEN_NOT_EQUIVALENT, NULL, 0);
+                return token_create(TOKEN_NOT_EQUIVALENT, NULL);
             else
             {
                 scanner_unget_char(scanner, c);
-                return token_create(TOKEN_NOT, NULL, 0);
+                return token_create(TOKEN_NOT, NULL);
             }
         case 11: // '/' consumed
             if (c == '/')
@@ -445,14 +416,14 @@ static Token scanner_scan(Scanner *scanner) //, char c)
             else
             {
                 scanner_unget_char(scanner, c);
-                return token_create(TOKEN_DIV, NULL, 0);
+                return token_create(TOKEN_DIV, NULL);
             }
             break;
         case 12: // Comment
             if (c == '\n')
                 scanner->state = 0;
             else if (c == -1)
-                return token_create(TOKEN_END, NULL, 0);
+                return token_create(TOKEN_END, NULL);
             break;
         case 13: // Multiline comment
             if (c == '*')
@@ -464,15 +435,15 @@ static Token scanner_scan(Scanner *scanner) //, char c)
             break;
         case 15: // '-' consumed
             if (c == '>')
-                return token_create(TOKEN_ARROW, NULL, 0);
+                return token_create(TOKEN_ARROW, NULL);
             else
             {
                 scanner_unget_char(scanner, c);
-                return token_create(TOKEN_MINUS, NULL, 0);
+                return token_create(TOKEN_MINUS, NULL);
             }
         default:
             fprintf(stderr, "Unknown state: %d\n", scanner->state);
-            return token_create(TOKEN_ERROR, NULL, 0);
+            return token_create(TOKEN_ERROR, NULL);
         }
     }
 }
