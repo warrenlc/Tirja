@@ -73,74 +73,74 @@ typedef enum
 static const char *TokenTypeNames[] = 
 {
      /** Keyword tokens */
-    "false",       // 0
-    "true",        // 1
-    "int type",         // 0 
-    "real type",        // 1
-    "bool type",        // 2
-    "proc",             // 3
-    "let",              // 4
-    "if",               // 5
-    "mutable",          // 6
-    "then",             // 7
-    "else",             // 8
-    "func",             // 9
+    "false",       
+    "true",        
+    "int type",           
+    "real type",        
+    "bool type",        
+    "proc",             
+    "let",              
+    "if",               
+    "mutable",          
+    "then",             
+    "else",             
+    "func",             
     /** End Keyword tokens */ 
-    "semicolon",        // 10
-    "plus",             // 11
-    "minus",            // 12
-    "times",            // 13
-    "div",              // 14
-    "mod",              // 15
-    "bwleft",           // 16
-    "bwright",          // 17
-    "bwand",            // 18
-    "bwor",             // 19
-    "xor",              // 20
-    "not",              // 21
-    "and",              // 22    
-    "or",               // 23      
-    "less_t",           // 24
-    "greater_t",        // 25
-    "equivalent",       // 26
-    "less_t_eq",        // 27
-    "greater_t_eq",     // 28
-    "not_equivalent",   // 29
-    "colon",            // 30
-    "equal",            // 31
-    "arrow",            // 32
-    "lambda",           // 33
-    "quote",            // 34
-    "char",             // 35
-    "id",               // 36
-    "l_brace",          // 37
-    "r_brace",          // 38
-    "l_paren",          // 39
-    "r_paren",          // 40
-    "l_bracket",         // 41
-    "r_bracket",         // 42
-    "end of line",      // 43
-    "error",            // 44
-    "assign",           // 45
-    "end",              // 46
-    "int",              // 47   
-    "real",             // 48
+    "semicolon",        
+    "plus",             
+    "minus",            
+    "times",            
+    "div",              
+    "mod",              
+    "bwleft",           
+    "bwright",          
+    "bwand",            
+    "bwor",             
+    "xor",              
+    "not",              
+    "and",                  
+    "or",                     
+    "less_t",           
+    "greater_t",        
+    "equivalent",       
+    "less_t_eq",        
+    "greater_t_eq",     
+    "not_equivalent",   
+    "colon",            
+    "equal",            
+    "arrow",            
+    "lambda",           
+    "quote",            
+    "char",             
+    "id",               
+    "l_brace",          
+    "r_brace",          
+    "l_paren",          
+    "r_paren",          
+    "l_bracket",        
+    "r_bracket",         
+    "end of line",      
+    "error",            
+    "assign",           
+    "end",              
+    "int",                 
+    "real",            
 };
 
 const char *keywords[] = 
 {
-    "false", // 0
-    "true", // 1
-    "int",  // 2
-    "real", // 3 
-    "bool", // 4
-    "proc", // 5
-    "let",  // 6
-    "if",   // 7
-    "mutable",  // 8
-    "then", // 9
-    "else", // 10
-    "func", // 11
+    "false",
+    "true",
+    "int",  
+    "real", 
+    "bool",
+    "proc",
+    "let",  
+    "if",   
+    "mutable",
+    "then", 
+    "else", 
+    "func", 
 };
 
 static int is_keyword(char *lexeme)
