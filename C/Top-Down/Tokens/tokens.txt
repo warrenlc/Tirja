@@ -1,0 +1,66 @@
+Keywords:
+    show
+    empty
+    size
+    sort
+    flip
+    set
+    map
+    filter
+    if
+    then
+    else
+    while
+    do
+    let
+    for
+    in
+    break
+    continue
+    true
+    false
+Operators:
+    ?
+    !
+    .
+    =
+    +=
+    -=
+    /=
+    *=
+    <<
+    >>
+    &
+    ^
+    |
+    +
+    -
+    *
+    /
+    %
+    @
+    ||
+    &&
+    >
+    <
+    <=
+    >=
+    ==
+    !=
+    - (Unary minus)
+    ~
+Delimiters:
+    ;
+    ,
+    (
+    )
+    {
+    }
+    [
+    ]
+Regular Expressions:
+    /[a-z\_]+[a-z0-9\_]*/ (for id and variable)
+    /-?\d+(\.\d+)?/ (for digit)
+Literals:
+    true
+    false
