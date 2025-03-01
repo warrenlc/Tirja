@@ -137,3 +137,22 @@
 <record_access>   := <record_name>    '.' <id>  |
                      <record_access'> '.' <id>
 <record_name>     := /[A-Z][a-zA-Z0-9\_]+/
+
+
+
+
+
+program := declarations statement_list
+declarations := (data_Dec | func_dec)*
+
+statement_list := statement ';' statement_list
+
+statement := func_call
+           | if_stmt
+           | for_stmt
+           | while_stmt
+           | empty
+
+data_dec := (var_dec | const_dec)*
+var_dec := 'var' ID ':' TYPE '=' (function_call | exp  
+

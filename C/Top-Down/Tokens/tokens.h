@@ -1,76 +1,141 @@
 typedef enum {
-    // Keywords
-    TOKEN_SHOW,
-    TOKEN_EMPTY,
-    TOKEN_SIZE,
-    TOKEN_SORT,
-    TOKEN_FLIP,
-    TOKEN_SET,
-    TOKEN_MAP,
-    TOKEN_FILTER,
+    TOKEN_CONST,
+    TOKEN_VAR,
+    TOKEN_INT_TYPE,
+    TOKEN_REAL_TYPE,
+    TOKEN_BOOL_TYPE,
+    TOKEN_STRING_TYPE,
+    TOKEN_FUNC,
+    TOKEN_STRUCT,
+    TOKEN_INIT,
+    TOKEN_SELF,
     TOKEN_IF,
-    TOKEN_THEN,
     TOKEN_ELSE,
-    TOKEN_WHILE,
-    TOKEN_DO,
-    TOKEN_LET,
+    TOKEN_ELSEIF,
     TOKEN_FOR,
-    TOKEN_IN,
-    TOKEN_BREAK,
-    TOKEN_CONTINUE,
+    TOKEN_WHILE,
     TOKEN_TRUE,
     TOKEN_FALSE,
-
-    // Operators
-    TOKEN_QUESTION,      // ?
-    TOKEN_EXCLAMATION,   // !
-    TOKEN_DOT,           // .
-    TOKEN_EQUAL,         // =
-    TOKEN_PLUS_EQUAL,    // +=
-    TOKEN_MINUS_EQUAL,   // -=
-    TOKEN_DIV_EQUAL,     // /=
-    TOKEN_MUL_EQUAL,     // *=
-    TOKEN_LEFT_SHIFT,    // <<
-    TOKEN_RIGHT_SHIFT,   // >>
-    TOKEN_AMPERSAND,     // &
-    TOKEN_CARET,         // ^
-    TOKEN_PIPE,          // |
-    TOKEN_PLUS,          // +
-    TOKEN_MINUS,         // -
-    TOKEN_STAR,          // *
-    TOKEN_SLASH,         // /
-    TOKEN_PERCENT,       // %
-    TOKEN_EXPONENT,      // @
-    TOKEN_OR,            // ||
-    TOKEN_AND,           // &&
-    TOKEN_GREATER,       // >
-    TOKEN_LESS,          // <
-    TOKEN_GREATER_EQUAL, // >=
-    TOKEN_LESS_EQUAL,    // <=
-    TOKEN_EQUAL_EQUAL,   // ==
-    TOKEN_NOT_EQUAL,     // !=
-    TOKEN_TILDE,         // ~
-
-    // Delimiters
-    TOKEN_SEMICOLON,     // ;
-    TOKEN_COMMA,         // ,
-    TOKEN_LEFT_PAREN,    // (
-    TOKEN_RIGHT_PAREN,   // )
-    TOKEN_LEFT_BRACE,    // {
-    TOKEN_RIGHT_BRACE,   // }
-    TOKEN_LEFT_BRACKET,  // [
-    TOKEN_RIGHT_BRACKET, // ]
-
-    // General Categories
-    TOKEN_IDENTIFIER,    // For variables, function names, etc.
-    TOKEN_NUMBER,        // Numeric literals
+    TOKEN_RETURN,
+    
+    TOKEN_COLON,
+    TOKEN_EQ,
+    TOKEN_SEMICOLON,
+    TOKEN_LPAREN,
+    TOKEN_RPAREN,
+    TOKEN_ARROW,
+    TOKEN_LBRACE,
+    TOKEN_RBRACE,
+    TOKEN_LBRACKET,
+    TOKEN_RBRACKET,
+    TOKEN_COMMA,
+    TOKEN_LOGIC_AND,
+    TOKEN_LOGIC_OR,
+    TOKEN_LOGIC_NOT,
+    TOKEN_GT,
+    TOKEN_GTEQ,
+    TOKEN_EQEQ,
+    TOKEN_LT,
+    TOKEN_LTEQ,
+    TOKEN_NOTEQ,
+    TOKEN_BW_OR,
+    TOKEN_XOR,
+    TOKEN_BW_AND,
+    TOKEN_LSHIFT,
+    TOKEN_RSHIFT,
+    TOKEN_PLUS,
+    TOKEN_MINUS,
+    TOKEN_TIMES,
+    TOKEN_DIVIDE,
+    TOKEN_MOD,
+    TOKEN_UMINUS,
+    TOKEN_BW_NOT,
+    TOKEN_QUOTE,
+    TOKEN_REAL,
+    TOKEN_INT,
+    TOKEN_ARRAY,
+    TOKEN_STRING,
+    TOKEN_ID,
+    TOKEN_END_OF_LINE,
 
     // Special Tokens
     TOKEN_EOF,           // End of file
-    TOKEN_ERROR          // Error token (for reporting issues in the lexer)
+    TOKEN_ERROR,          // Error token (for reporting issues in the lexer)
+    TOKEN_END
 } Token_type;
+
+
+static const char *TokenTypeNames[] = 
+{
+    /** Take special care that these are in the same order as the enum above */
+    "const",
+    "var",
+    "int_type",
+    "real_type",
+    "bool_type",
+    "string_type",
+    "func",
+    "struct",
+    "init",
+    "self",
+    "if",
+    "else",
+    "elseif",
+    "for",
+    "while",
+    "true",
+    "false",
+    "return",
+    
+    "colon",
+    "equal",
+    "semicolon",
+    "lparen",
+    "rparen",
+    "arrow",
+    "lbrace",
+    "rbrace",
+    "lbracket",
+    "rbracket",
+    "comma",
+    "and",
+    "or",
+    "not",
+    "gt",
+    "gteq",
+    "eqeq",
+    "lt",
+    "lteq",
+    "noteq",
+    "bw_or",
+    "xor",
+    "bw_and",
+    "lshift",
+    "rshift",
+    "plus",
+    "minus",
+    "times",
+    "divide",
+    "mod",
+    "uminus",
+    "bw_not",
+    "quote",
+    "real",
+    "int",
+    "array",
+    "string",
+    "id",
+    "end of line",
+    "eof",
+    "error",
+    "end"
+};
+
 
 typedef struct {
     Token_type type;
     char *lexeme;
 } Token;
+
+void token_init(Token *token, Token_type type, char *lexeme);
+Token token_create(Token_type type, char *lexeme);

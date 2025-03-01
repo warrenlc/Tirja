@@ -1,66 +1,181 @@
-Keywords:
-    show
-    empty
-    size
-    sort
-    flip
-    set
-    map
-    filter
-    if
-    then
-    else
-    while
-    do
-    let
-    for
-    in
-    break
-    continue
-    true
-    false
-Operators:
-    ?
-    !
-    .
-    =
-    +=
-    -=
-    /=
-    *=
-    <<
-    >>
-    &
-    ^
-    |
-    +
-    -
-    *
-    /
-    %
-    @
-    ||
-    &&
-    >
-    <
-    <=
-    >=
-    ==
-    !=
-    - (Unary minus)
-    ~
-Delimiters:
-    ;
-    ,
-    (
-    )
-    {
+TOKENS: 
+
+TOKEN_CONST,
+TOKEN_VAR,
+TOKEN_COLON,
+TOKEN_EQ,
+TOKEN_SEMICOLON,
+TOKEN_FUNC,
+TOKEN_STRUCT,
+TOKEN_LPAREN,
+TOKEN_RPAREN,
+TOKEN_ARROW,
+TOKEN_LBRACE,
+TOKEN_RBRACE,
+TOKEN_LSQUARE,
+TOKEN_RSQUARE,
+TOKEN_COMMA,
+TOKEN_INT_TYPE,
+TOKEN_REAL_TYPE,
+TOKEN_STRING_TYPE,
+TOKEN_BOOL_TYPE,
+TOKEN_INIT,
+TOKEN_SELF,
+TOKEN_IF,
+TOKEN_ELSEIF,
+TOKEN_ELSE,
+TOKEN_FOR,
+TOKEN_WHILE,
+TOKEN_LOGIC_AND,
+TOKEN_LOGIC_OR,
+TOKEN_LOGIC_NOT,
+TOKEN_GT,
+TOKEN_GTEQ,
+TOKEN_EQEQ,
+TOKEN_LT,
+TOKEN_LTEQ,
+TOKEN_NOTEQ,
+TOKEN_BW_OR,
+TOKEN_XOR,
+TOKEN_BW_AND,
+TOKEN_LSHIFT,
+TOKEN_RSHIFT,
+TOKEN_PLUS,
+TOKEN_MINUS,
+TOKEN_TIMES,
+TOKEN_DIVIDE,
+TOKEN_MOD,
+TOKEN_UMINUS,
+TOKEN_BW_NOT,
+TOKEN_QUOTE,
+TOKEN_REAL,
+TOKEN_INT,
+TOKEN_ARRAY,
+TOKEN_TRUE,
+TOKEN_FALSE,
+TOKEN_STRING,
+TOKEN_ID,
+
+/** Examples **/ 
+
+func nothing() -> () {
+    
+}
+
+func foo(bar : int, fizz : real) -> (real) {
+    let buzz :int = 6
+    var zoo :real = 3.2 
+    zoo = fizz*bar
+    
+    return buzz / zoo
+}
+
+func main() {
+    const a : int = 9
+    var b : real = 3.14
+
+    var x : int = 0
+    var y : real = 1.5
+
+    if (x < a) {
+        // a bunch of stuff
     }
-    [
-    ]
-Regular Expressions:
-    /[a-z\_]+[a-z0-9\_]*/ (for id and variable)
-    /-?\d+(\.\d+)?/ (for digit)
-Literals:
-    true
-    false
+    elseif (x > a) {
+        /* other stuff
+        */
+    }
+    else {
+        y = foo (a, b)
+    }
+
+    for x in [1, 2, 3, 4, 5] {
+        print(x)
+    }
+
+    let g : int[] = [2, 3, 5, 7, 11, 13, 17, 19, 23]
+
+    for x in g {
+        print(x*2)
+    }
+
+    let i = 0
+    while (i < g.length) {
+        g = g + 1
+    }
+
+    func fac(n : int) -> (int) {
+        if (n == 0 || n == 1) { return 1 }
+        return n * fac(n-1)
+    } 
+
+    const numbers : int[] = [1, 2, 3]
+    const my_name = "Joe"
+
+    func rshift(val : int, places : int) -> int {
+        return val >> places
+    }
+}
+
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+<program> ::= ( <variables> | <functions> | <structs> )* <block>
+<variables> ::= ( "const" | "var" ) <id> ":" <type> "=" <expression> ";"
+<functions> ::= <function>*
+<structs> ::= <struct>*
+<function> ::= "func" <id> "(" <param_list> ")" "->" <type> <func_body>
+<struct> ::= "struct" <id> "{" <members> <struct_init> "}"
+<param_list> ::= <parameter> ( "," <param_list> )*
+<parameter> ::= <id> ":" <type>
+<members> ::= <parameter> (";" <param_list> )*
+<type> ::= <basic_type> | <basic_type> "[]"
+<basic_type> ::= "int" | "real" | "string" | "bool" | <id>
+<struct_init> ::= "init" "(" <param_list> ")" "->" "self" "{" <block> "}"
+<block> ::= <statement>*
+<func_body> ::= "{" <variables>* <block> "}"
+<statement> ::= <variables> | <if_stmt> | <for_stmt> | <while_stmt> | <assign_stmt> | <call_stmt>
+<if_stmt> ::= "if" "(" <condition> ")" "{" <block> "}" <else_if>*
+<else_if> ::= ( "elseif" "(" <condition> ")" "{" <block> "}" )* "else" "{" <block> "}" | "else" "{" <block> "}"
+<for_stmt> ::= "for" <id> "in" <container> "{" <block> "}"
+<container> ::= <id> | <array_literal> | <string_literal>
+<while_stmt> ::= "while" <condition> "{" <block> "}"
+<assign_stmt> ::= <id> "=" <expression>
+<call_stmt> ::= <id> "(" <expr_list> ")"
+<condition> ::= <not_cond> <cond_tail>
+<cond_tail> ::= ( "&&" | "||" ) <not_cond> <cond_tail>?
+<not_cond> ::= "!" <not_cond> | <primary_cond>
+<primary_cond> ::= <comp_expr> | <boolean_literal> | "(" <condition> ")"
+<comp_expr> ::= <comp_exp_prime> <comp_exp_tail>?
+<comp_exp_tail> ::= ( ">" | ">=" | "==" | "<" | "<=" | "!=" ) <comp_exp_prime> <comp_exp_tail>?
+<comp_exp_prime> ::= <expression>
+<expr_list> ::= <expression> ( "," <expr_list> )*
+<expression> ::= <bitwise_or>
+<bitwise_or> ::= <bitwiseXor> <bitwise_or_tail>?
+<bitwise_or_tail> ::= "|" <bitwiseXor> <bitwise_or_tail>?
+<bitwiseXor> ::= <bitwise_and> <bitwiseXor_tail>?
+<bitwiseXor_tail> ::= "^" <bitwise_and> <bitwiseXor_tail>?
+<bitwise_and> ::= <shift_expr> <bitwise_and_tail>?
+<bitwise_and_tail> ::= "&" <shift_expr> <bitwise_and_tail>?
+<shift_expr> ::= <add_expr> <shift_expr_tail>?
+<shift_expr_tail> ::= ( "<<" | ">>" ) <add_expr> <shift_expr_tail>?
+<add_expr> ::= <mult_expr> <add_expr_tail>?
+<add_expr_tail> ::= ( "+" | "-" ) <mult_expr> <add_expr_tail>?
+<mult_expr> ::= <unary_expr> <mult_expr_tail>?
+<mult_expr_tail> ::= ( "*" | "/" | "%" ) <unary_expr> <mult_expr_tail>?
+<unary_expr> ::= ( "-" | "~" ) <unary_expr> | <primary_expr>
+<primary_expr> ::= <id> "(" <expr_list>? ")" | <id> | <number> | "(" <expression> ")"
+<string_literal> ::= "\"" <character>* "\""
+<number> ::= <integer> | <real>
+<real> ::= "-"? "0." [0-9]* | "-"? [1-9]+ [0-9]* "." [0-9]*
+<integer> ::= "0" | "-"? [1-9]+ [0-9]*
+<array_literal> ::= "[" ( <int_list> | <real_list> | <string_list> | <bool_list> ) "]"
+<int_list> ::= <integer> ( "," <int_list> )*
+<real_list> ::= <real> ( "," <real_list> )*
+<bool_list> ::= <boolean_literal> ( "," <bool_list> )*
+<string_list> ::= <string_literal> ( "," <string_list> )*
+<boolean_literal> ::= "true" | "false"
+<character> ::= <letter> | <digit> | "!" | "#" | "$" | "%" | "&" | "/" | "\\" | "{" | "}" | "[" | "]" | "(" | ")" | "=" | "?" | "+" | "@" | "<" | ">" | "^" | "*" | "'" | "-" | "_" | "." | ":" | "," | ";"
+<letter> ::= [a-z] | [A-Z]
+<digit> ::= [0-9]
+<id> ::= ( <letter> | "_" )+ ( <letter> | "_" | <digit> )?
+
+
