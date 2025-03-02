@@ -17,7 +17,9 @@ typedef enum {
     TOKEN_TRUE,
     TOKEN_FALSE,
     TOKEN_RETURN,
+    TOKEN_IN,
     
+    TOKEN_DOT,
     TOKEN_COLON,
     TOKEN_EQ,
     TOKEN_SEMICOLON,
@@ -86,7 +88,9 @@ static const char *TokenTypeNames[] =
     "true",
     "false",
     "return",
+    "in",
     
+    "dot",
     "colon",
     "equal",
     "semicolon",

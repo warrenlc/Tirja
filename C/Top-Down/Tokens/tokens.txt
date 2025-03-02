@@ -63,7 +63,7 @@ func nothing() -> () {
 }
 
 func foo(bar : int, fizz : real) -> (real) {
-    let buzz :int = 6
+    const buzz :int = 6
     var zoo :real = 3.2 
     zoo = fizz*bar
     
@@ -92,13 +92,13 @@ func main() {
         print(x)
     }
 
-    let g : int[] = [2, 3, 5, 7, 11, 13, 17, 19, 23]
+    const g : int[] = [2, 3, 5, 7, 11, 13, 17, 19, 23]
 
     for x in g {
         print(x*2)
     }
 
-    let i = 0
+    var i = 0
     while (i < g.length) {
         g = g + 1
     }
@@ -162,7 +162,8 @@ func main() {
 <mult_expr> ::= <unary_expr> <mult_expr_tail>?
 <mult_expr_tail> ::= ( "*" | "/" | "%" ) <unary_expr> <mult_expr_tail>?
 <unary_expr> ::= ( "-" | "~" ) <unary_expr> | <primary_expr>
-<primary_expr> ::= <id> "(" <expr_list>? ")" | <id> | <number> | "(" <expression> ")"
+<primary_expr> ::= <method_call> | <id> "(" <expr_list>? ")" | <id> | <number> | "(" <expression> ")"
+<method_call> ::= "." <id>
 <string_literal> ::= "\"" <character>* "\""
 <number> ::= <integer> | <real>
 <real> ::= "-"? "0." [0-9]* | "-"? [1-9]+ [0-9]* "." [0-9]*

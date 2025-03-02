@@ -10,7 +10,7 @@
 
 #include "../Tokens/tokens.h"
 
-#define KEYWORD_COUNT 18
+#define KEYWORD_COUNT 19
 #define MAX_TOKEN_LENGTH 10
 #define MAX_STRING_LENGTH 1024
 
@@ -33,7 +33,8 @@ const char *keywords[] =
     "while",
     "true",
     "false",
-    "return"
+    "return",
+    "in"
 };
 
 static int is_keyword(char *lexeme)
@@ -75,7 +76,7 @@ static void scanner_reset(Scanner *scanner)
 }
 
 
-static char scanner_get_char(Scanner *scanner)
+static char scanner_get_char(Scanner *scanner, FILE *file)
 {
     char c;
     if (scanner->haveBuffered == 1)
@@ -84,7 +85,7 @@ static char scanner_get_char(Scanner *scanner)
         return scanner->bufferedChar;
     }
     
-    c = getc(stdin);
+    c = getc(file);
     if (c == EOF)
         return -1;
 
@@ -126,14 +127,14 @@ static void scanner_accumulate_string(Scanner *scanner, char c)
     }
 }
 
-static Token scanner_scan(Scanner *scanner)
+static Token scanner_scan(Scanner *scanner, FILE *file)
 {
     scanner_reset(scanner);
     int c = 0;
     
     while(1)
     {
-        c = scanner_get_char(scanner);
+        c = scanner_get_char(scanner, file);
 
         switch (scanner->state)
         {
@@ -152,6 +153,7 @@ static Token scanner_scan(Scanner *scanner)
             {
             case -1   : return token_create(TOKEN_END, NULL);
             case ';'  : return token_create(TOKEN_SEMICOLON, NULL);
+            case '.'  : return token_create(TOKEN_DOT, NULL);
             case ' '  : case ',' :
             case '\t' :
             case '\r' : break;
@@ -289,7 +291,7 @@ static Token scanner_scan(Scanner *scanner)
                 while (c != '"') // Stop when the closing quote is encountered 
                 {  
                     scanner_accumulate_string(scanner, c);  
-                    c = scanner_get_char(scanner);  
+                    c = scanner_get_char(scanner, file);  
                 }
         
                 scanner->stringReaderBuffer[scanner->position] = '\0';

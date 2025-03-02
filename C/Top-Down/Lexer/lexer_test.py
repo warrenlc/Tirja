@@ -79,8 +79,337 @@ expressions = {
     "const y: real = 3.14;": "Token: const\nToken: id(y)\nToken: colon\nToken: real_type\nToken: equal\nToken: real(3.14)\nToken: semicolon\nToken: end of line",
     "var z: bool = true;": "Token: var\nToken: id(z)\nToken: colon\nToken: bool_type\nToken: equal\nToken: true\nToken: semicolon\nToken: end of line",
     "x + 10;": "Token: id(x)\nToken: plus\nToken: int(10)\nToken: semicolon\nToken: end of line",
+    "func nothing() -> () {}": "Token: func\nToken: id(nothing)\nToken: lparen\nToken: rparen\nToken: arrow\nToken: lparen\nToken: rparen\nToken: lbrace\nToken: rbrace\nToken: end of line",
+    """func foo(bar : int, fizz : real) -> (real) {
+            const buzz :int = 6
+            var zoo :real = 3.2 
+            zoo = fizz*bar
+            
+            return buzz / zoo
+        }
 
-}
+        func main() {
+            const a : int = 9
+            var b : real = 3.14
+
+            var x : int = 0
+            var y : real = 1.5
+
+            if (x < a) {
+                // a bunch of stuff
+            }
+            elseif (x > a) {
+                /* other stuff
+                */
+            }
+            else {
+                y = foo (a, b)
+            }
+
+            for x in [1, 2, 3, 4, 5] {
+                print(x)
+            }
+
+            const g : int[] = [2, 3, 5, 7, 11, 13, 17, 19, 23]
+
+            for x in g {
+                print(x*2)
+            }
+
+            var i = 0
+            while (i < g.length) {
+                g = g + 1
+            }
+
+            func fac(n : int) -> (int) {
+                if (n == 0 || n == 1) { return 1 }
+                return n * fac(n-1)
+            } 
+
+            const numbers : int[] = [1, 2, 3]
+            const my_name = "Joe"
+
+            func rshift(val : int, places : int) -> int {
+                return val >> places
+            }
+        }""": """Token: func
+Token: id(foo)
+Token: lparen
+Token: id(bar)
+Token: colon
+Token: int_type
+Token: id(fizz)
+Token: colon
+Token: real_type
+Token: rparen
+Token: arrow
+Token: lparen
+Token: real_type
+Token: rparen
+Token: lbrace
+Token: end of line
+Token: const
+Token: id(buzz)
+Token: colon
+Token: int_type
+Token: equal
+Token: int(6)
+Token: end of line
+Token: var
+Token: id(zoo)
+Token: colon
+Token: real_type
+Token: equal
+Token: real(3.2)
+Token: end of line
+Token: id(zoo)
+Token: equal
+Token: id(fizz)
+Token: times
+Token: id(bar)
+Token: end of line
+Token: end of line
+Token: return
+Token: id(buzz)
+Token: divide
+Token: id(zoo)
+Token: end of line
+Token: rbrace
+Token: end of line
+Token: end of line
+Token: func
+Token: id(main)
+Token: lparen
+Token: rparen
+Token: lbrace
+Token: end of line
+Token: const
+Token: id(a)
+Token: colon
+Token: int_type
+Token: equal
+Token: int(9)
+Token: end of line
+Token: var
+Token: id(b)
+Token: colon
+Token: real_type
+Token: equal
+Token: real(3.14)
+Token; end of line
+Token: end of line
+Token: var
+Token: id(x)
+Token: colon
+Token: int_type
+Token: equal
+Token: int(0)
+Token: end of line
+Token: var
+Token: id(y)
+Token: colon
+Token: real_type
+Token: equal
+Token: real(1.5)
+Token: end of line
+Token: end of line
+Token: if
+Token: lparen
+Token: id(x)
+Token: lt
+Token: id(a)
+Token: rparen
+Token: lbrace
+Token: end of line
+Token: rbrace
+Token: end of line
+Token: elseif
+Token: lparen
+Token: id(x)
+Token: gt
+Token: id(a)
+Token: rparen
+Token: lbrace
+Token: end of line
+Token: end of line
+Token: rbrace
+Token: end of line
+Token: else
+Token: lbrace
+Token: end of line
+Token: id(y)
+Token: equal
+Token: id(foo)
+Token: lparen
+Token: id(a)
+Token: id(b)
+Token: rparen
+Token: end of line
+Token: rbrace
+Token: end of line 
+Token: end of line 
+Token: for
+Token: id(x)
+Token: in
+Token: lbracket
+Token: int(1)
+Token: int(2)
+Token: int(3)
+Token: int(4)
+Token: int(5)
+Token: rbracket
+Token: lbrace
+Token: end of line   
+Token: id(print)
+Token: lparen
+Token: id(x)
+Token: rparen
+Token: end of line
+Token: rbrace
+Token: end of line
+Token: end of line
+Token: const
+Token: id(g)
+Token: colon
+Token: int_type
+Token: lbracket
+Token: rbracket
+Token: equal
+Token: lbracket
+Token: int(2)
+Token: int(3)
+Token: int(5)
+Token: int(7)
+Token: int(11)
+Token: int(13)
+Token: int(17)
+Token: int(19)
+Token: int(23)
+Token: rbracket
+Token: end of line
+Token: end of line
+Token: for
+Token: id(x)
+Token: in
+Token: id(g)
+Token: lbrace
+Token: end of line
+Token: id(print)
+Token: lparen
+Token: id(x)
+Token: times
+Token: int(2)
+Token: rparen
+Token: end of line
+Token: rbrace
+Token: end of line
+Token: end of line
+Token: var
+Token: id(i)
+Token: equal
+Token: int(0)
+Token: end of line
+Token: while
+Token: lparen
+Token: id(i)
+Token: lt
+Token: id(g)
+Token: dot
+Token: id(length)
+Token: rparen
+Token: lbrace
+Token: end of line
+Token: id(g)
+Token: equal
+Token: id(g)
+Token: plus
+Token: int(1)
+Token: end of line
+Token: rbrace
+Token: end of line
+Token: end of line
+Token: func
+Token: id(fac)
+Token: lparen
+Token: id(n)
+Token: colon
+Token: int_type
+Token: rparen
+Token: arrow
+Token: lparen
+Token: int_type
+Token: rparen
+Token: lbrace
+Token: end of line
+Token: if
+Token: lparen
+Token: id(n)
+Token: eqeq
+Token: int(0)
+Token: or
+Token: id(n)
+Token: eqeq
+Token: int(1)
+Token: rparen
+Token: lbrace
+Token: return
+Token: int(1)
+Token: rbrace
+Token: end of line
+Token: return
+Token: id(n)
+Token: times
+Token: id(fac)
+Token: lparen
+Token: id(n)
+Token: minus
+Token: int(1)
+Token: rparen
+Token: end of line
+Token: rbrace
+Token: end of line
+Token: end of line
+Token: const
+Token: id(numbers)
+Token: colon
+Token: int_type
+Token: lbracket
+Token: rbracket
+Token: equal
+Token: lbracket
+Token: int(1)
+Token: int(2)
+Token: int(3)
+Token: rbracket
+Token: end of line
+Token: const
+Token: id(my_name)
+Token: equal
+Token: string(Joe)
+Token: end of line
+Token: end of line
+Token: func
+Token: id(rshift)
+Token: lparen
+Token: id(val)
+Token: colon
+Token: int_type
+Token: id(places)
+Token: colon
+Token: int_type
+Token: rparen
+Token: arrow
+Token: int_type
+Token: lbrace
+Token: end of line
+Token: return
+Token: id(val)
+Token: rshift
+Token: id(places)
+Token: end of line
+Token: rbrace
+Token: end of line
+Token: rbrace"""}
 
 
 
@@ -110,6 +439,7 @@ def normalize_output(output):
     # Remove extra spaces and newlines
     return ' '.join(output.split())
 
+actual = []
 # Loop through the test expressions and run the lexer
 for expression, expected_output in expressions.items():
     actual_output = run_lexer(expression)
@@ -117,7 +447,7 @@ for expression, expected_output in expressions.items():
     # Normalize both expected and actual output before comparison
     normalized_expected = normalize_output(expected_output)
     normalized_actual = normalize_output(actual_output)
-    
+    actual.append(normalized_actual)
     # Compare the expected output with the actual output
     if normalized_actual == normalized_expected:
         print(f"\033[32mTest passed for: {expression}\033[0m")
@@ -125,5 +455,289 @@ for expression, expected_output in expressions.items():
         print(f"\033[31mTest failed for: {expression}\033[0m")
         print(f"Expected:\n{expected_output}")
         print(f"Actual:\n{actual_output}")
-        print(f"{repr(expected_output)}")
-        print(f"{repr(actual_output)}")
+#        print(f"{repr(expected_output)}")
+#        print(f"{repr(actual_output)}")
+
+for dammit in actual:
+    print(dammit)
+    print()
+
+print("""Token: func
+Token: id(foo)
+Token: lparen
+Token: id(bar)
+Token: colon
+Token: int_type
+Token: id(fizz)
+Token: colon
+Token: real_type
+Token: rparen
+Token: arrow
+Token: lparen
+Token: real_type
+Token: rparen
+Token: lbrace
+Token: end of line
+Token: const
+Token: id(buzz)
+Token: colon
+Token: int_type
+Token: equal
+Token: int(6)
+Token: end of line
+Token: var
+Token: id(zoo)
+Token: colon
+Token: real_type
+Token: equal
+Token: real(3.2)
+Token: end of line
+Token: id(zoo)
+Token: equal
+Token: id(fizz)
+Token: times
+Token: id(bar)
+Token: end of line
+Token: end of line
+Token: return
+Token: id(buzz)
+Token: divide
+Token: id(zoo)
+Token: end of line
+Token: rbrace
+Token: end of line
+Token: end of line
+Token: func
+Token: id(main)
+Token: lparen
+Token: rparen
+Token: lbrace
+Token: end of line
+Token: const
+Token: id(a)
+Token: colon
+Token: int_type
+Token: equal
+Token: int(9)
+Token: end of line
+Token: var
+Token: id(b)
+Token: colon
+Token: real_type
+Token: equal
+Token: real(3.14)
+Token; end of line
+Token: end of line
+Token: var
+Token: id(x)
+Token: colon
+Token: int_type
+Token: equal
+Token: int(0)
+Token: end of line
+Token: var
+Token: id(y)
+Token: colon
+Token: real_type
+Token: equal
+Token: real(1.5)
+Token: end of line
+Token: end of line
+Token: if
+Token: lparen
+Token: id(x)
+Token: lt
+Token: id(a)
+Token: rparen
+Token: lbrace
+Token: end of line
+Token: rbrace
+Token: end of line
+Token: elseif
+Token: lparen
+Token: id(x)
+Token: gt
+Token: id(a)
+Token: rparen
+Token: lbrace
+Token: end of line
+Token: end of line
+Token: rbrace
+Token: end of line
+Token: else
+Token: lbrace
+Token: end of line
+Token: id(y)
+Token: equal
+Token: id(foo)
+Token: lparen
+Token: id(a)
+Token: id(b)
+Token: rparen
+Token: end of line
+Token: rbrace
+Token: end of line 
+Token: end of line 
+Token: for
+Token: id(x)
+Token: in
+Token: lbracket
+Token: int(1)
+Token: int(2)
+Token: int(3)
+Token: int(4)
+Token: int(5)
+Token: rbracket
+Token: lbrace
+Token: end of line   
+Token: id(print)
+Token: lparen
+Token: id(x)
+Token: rparen
+Token: end of line
+Token: rbrace
+Token: end of line
+Token: end of line
+Token: const
+Token: id(g)
+Token: colon
+Token: int_type
+Token: lbracket
+Token: rbracket
+Token: equal
+Token: lbracket
+Token: int(2)
+Token: int(3)
+Token: int(5)
+Token: int(7)
+Token: int(11)
+Token: int(13)
+Token: int(17)
+Token: int(19)
+Token: int(23)
+Token: rbracket
+Token: end of line
+Token: end of line
+Token: for
+Token: id(x)
+Token: in
+Token: id(g)
+Token: lbrace
+Token: end of line
+Token: id(print)
+Token: lparen
+Token: id(x)
+Token: times
+Token: int(2)
+Token: rparen
+Token: end of line
+Token: rbrace
+Token: end of line
+Token: end of line
+Token: var
+Token: id(i)
+Token: equal
+Token: int(0)
+Token: end of line
+Token: while
+Token: lparen
+Token: id(i)
+Token: lt
+Token: id(g)
+Token: dot
+Token: id(length)
+Token: rparen
+Token: lbrace
+Token: end of line
+Token: id(g)
+Token: equal
+Token: id(g)
+Token: plus
+Token: int(1)
+Token: end of line
+Token: rbrace
+Token: end of line
+Token: end of line
+Token: func
+Token: id(fac)
+Token: lparen
+Token: id(n)
+Token: colon
+Token: int_type
+Token: rparen
+Token: arrow
+Token: lparen
+Token: int_type
+Token: rparen
+Token: lbrace
+Token: end of line
+Token: if
+Token: lparen
+Token: id(n)
+Token: eqeq
+Token: int(0)
+Token: or
+Token: id(n)
+Token: eqeq
+Token: int(1)
+Token: rparen
+Token: lbrace
+Token: return
+Token: int(1)
+Token: rbrace
+Token: end of line
+Token: return
+Token: id(n)
+Token: times
+Token: id(fac)
+Token: lparen
+Token: id(n)
+Token: minus
+Token: int(1)
+Token: rparen
+Token: end of line
+Token: rbrace
+Token: end of line
+Token: end of line
+Token: const
+Token: id(numbers)
+Token: colon
+Token: int_type
+Token: lbracket
+Token: rbracket
+Token: equal
+Token: lbracket
+Token: int(1)
+Token: int(2)
+Token: int(3)
+Token: rbracket
+Token: end of line
+Token: const
+Token: id(my_name)
+Token: equal
+Token: string(Joe)
+Token: end of line
+Token: end of line
+Token: func
+Token: id(rshift)
+Token: lparen
+Token: id(val)
+Token: colon
+Token: int_type
+Token: id(places)
+Token: colon
+Token: int_type
+Token: rparen
+Token: arrow
+Token: int_type
+Token: lbrace
+Token: end of line
+Token: return
+Token: id(val)
+Token: rshift
+Token: id(places)
+Token: end of line
+Token: rbrace
+Token: end of line
+Token: rbrace
+Token: end of line""")
