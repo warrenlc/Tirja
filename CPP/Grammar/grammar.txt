@@ -1,0 +1,61 @@
+<program> ::= ( <variables> | <functions> | <structs> )* <block>
+<variables> ::= ( "const" | "var" ) <id> ":" <type> "=" <expression> ";"
+<functions> ::= <function>*
+<structs> ::= <struct>*
+<function> ::= "func" <id> "(" <param_list> ")" "->" <type> <func_body>
+<struct> ::= "struct" <id> "{" <members> <struct_init> "}"
+<param_list> ::= <parameter> ( "," <param_list> )*
+<parameter> ::= <id> ":" <type>
+<members> ::= <parameter> (";" <param_list> )*
+<type> ::= <basic_type> | <basic_type> "[]"
+<basic_type> ::= "int" | "real" | "string" | "bool" | <id>
+<struct_init> ::= "init" "(" <param_list> ")" "->" "self" "{" <block> "}"
+<block> ::= <statement>*
+<func_body> ::= "{" <variables>* <block> "}"
+<statement> ::= <variables> | <if_stmt> | <for_stmt> | <while_stmt> | <assign_stmt> | <call_stmt>
+<if_stmt> ::= "if" "(" <condition> ")" "{" <block> "}" <else_if>*
+<else_if> ::= ( "elseif" "(" <condition> ")" "{" <block> "}" )* "else" "{" <block> "}" | "else" "{" <block> "}"
+<for_stmt> ::= "for" <id> "in" <container> "{" <block> "}"
+<container> ::= <id> | <array_literal> | <string_literal>
+<while_stmt> ::= "while" <condition> "{" <block> "}"
+<assign_stmt> ::= <id> "=" <expression>
+<call_stmt> ::= <id> "(" <expr_list> ")"
+<condition> ::= <not_cond> <cond_tail>
+<cond_tail> ::= ( "&&" | "||" ) <not_cond> <cond_tail>?
+<not_cond> ::= "!" <not_cond> | <primary_cond>
+<primary_cond> ::= <comp_expr> | <boolean_literal> | "(" <condition> ")"
+<comp_expr> ::= <comp_exp_prime> <comp_exp_tail>?
+<comp_exp_tail> ::= ( ">" | ">=" | "==" | "<" | "<=" | "!=" ) <comp_exp_prime> <comp_exp_tail>?
+<comp_exp_prime> ::= <expression>
+<expr_list> ::= <expression> ( "," <expr_list> )*
+<expression> ::= <bitwise_or>
+<bitwise_or> ::= <bitwiseXor> <bitwise_or_tail>?
+<bitwise_or_tail> ::= "|" <bitwiseXor> <bitwise_or_tail>?
+<bitwiseXor> ::= <bitwise_and> <bitwiseXor_tail>?
+<bitwiseXor_tail> ::= "^" <bitwise_and> <bitwiseXor_tail>?
+<bitwise_and> ::= <shift_expr> <bitwise_and_tail>?
+<bitwise_and_tail> ::= "&" <shift_expr> <bitwise_and_tail>?
+<shift_expr> ::= <add_expr> <shift_expr_tail>?
+<shift_expr_tail> ::= ( "<<" | ">>" ) <add_expr> <shift_expr_tail>?
+<add_expr> ::= <mult_expr> <add_expr_tail>?
+<add_expr_tail> ::= ( "+" | "-" ) <mult_expr> <add_expr_tail>?
+<mult_expr> ::= <unary_expr> <mult_expr_tail>?
+<mult_expr_tail> ::= ( "*" | "/" | "%" ) <unary_expr> <mult_expr_tail>?
+<unary_expr> ::= ( "-" | "~" ) <unary_expr> | <primary_expr>
+<primary_expr> ::= <method_call> | <id> "(" <expr_list>? ")" | <id> | <number> | "(" <expression> ")"
+<method_call> ::= "." <id>
+<string_literal> ::= "\"" <character>* "\""
+<number> ::= <integer> | <real>
+<real> ::= "-"? "0." [0-9]* | "-"? [1-9]+ [0-9]* "." [0-9]*
+<integer> ::= "0" | "-"? [1-9]+ [0-9]*
+<array_literal> ::= "[" ( <int_list> | <real_list> | <string_list> | <bool_list> ) "]"
+<int_list> ::= <integer> ( "," <int_list> )*
+<real_list> ::= <real> ( "," <real_list> )*
+<bool_list> ::= <boolean_literal> ( "," <bool_list> )*
+<string_list> ::= <string_literal> ( "," <string_list> )*
+<boolean_literal> ::= "true" | "false"
+<character> ::= <letter> | <digit> | "!" | "#" | "$" | "%" | "&" | "/" | "\\" | "{" | "}" | "[" | "]" | "(" | ")" | "=" | "?" | "+" | "@" | "<" | ">" | "^" | "*" | "'" | "-" | "_" | "." | ":" | "," | ";"
+<letter> ::= [a-z] | [A-Z]
+<digit> ::= [0-9]
+<id> ::= ( <letter> | "_" )+ ( <letter> | "_" | <digit> )?
+

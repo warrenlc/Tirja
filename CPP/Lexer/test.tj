@@ -1,0 +1,53 @@
+func foo(bar : int, fizz : real) -> (real) {
+    const buzz :int = 6
+    var zoo :real = 3.2 
+    zoo = fizz*bar
+    
+    return buzz / zoo
+}
+
+func main() {
+    const a : int = 9
+    var b : real = 3.14
+
+    var x : int = 0
+    var y : real = 1.5
+
+    if (x < a) {
+        // a bunch of stuff
+    }
+    elseif (x > a) {
+        /* other stuff
+        */
+    }
+    else {
+        y = foo (a, b)
+    }
+
+    for x in [1, 2, 3, 4, 5] {
+        print(x)
+    }
+
+    const g : int[] = [2, 3, 5, 7, 11, 13, 17, 19, 23]
+
+    for x in g {
+        print(x*2)
+    }
+
+    var i = 0
+    while (i < g.length) {
+        g = g + 1
+    }
+
+    func fac(n : int) -> (int) {
+        if (n == 0 || n == 1) { return 1 }
+        return n * fac(n-1)
+    } 
+
+    const numbers : int[] = [1, 2, 3]
+    const my_name = "Joe"
+
+    func rshift(val : int, places : int) -> int {
+        return val >> places
+    }
+}
