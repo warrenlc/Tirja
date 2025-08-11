@@ -166,6 +166,7 @@ public:
                 case '+': return Token(Token_type::TOKEN_PLUS, "");
                 case '-': state = 15; break;
                 case '!': state = 10; break;
+                case '~': return Token(Token_type::TOKEN_BW_NOT, "");
                 case '^': return Token(Token_type::TOKEN_XOR, "");
                 case '(': return Token(Token_type::TOKEN_LPAREN, "");
                 case ')': return Token(Token_type::TOKEN_RPAREN, "");

@@ -22,7 +22,7 @@ int main (int argc, char *argv[])
     Scanner scanner;
     Token token;
     
-    while ((token = scanner.scan(file)).type != TOKEN_END)  //scanner_scan(&scanner, file)).type != TOKEN_END) {
+    while ((token = scanner.scan(file)).type != TOKEN_END)  
         token.print(); 
     
     return 0;
